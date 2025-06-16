@@ -23,4 +23,14 @@ class Restaurant < ApplicationRecord
         critical: "critico",
         inactive: "inactivo"
     }
+
+    def recalculate_status
+        if devices.any? { |device| device.status == "critical" }
+            update(status: "critical")
+        elsif devices.any? { |device| device.status == "warning" }
+            update(status: "warning")
+        else
+            update(status: "active")
+        end
+    end
 end
