@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  device: one
+  performed_at: 2025-06-16 11:14:27
+  description: MyText
+
+two:
+  device: two
+  performed_at: 2025-06-16 11:14:27
+  description: MyText

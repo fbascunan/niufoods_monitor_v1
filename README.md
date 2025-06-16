@@ -1,27 +1,7 @@
-# README
+# bosquejo del flujo de la aplicación
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+[Restaurante(script)] → http → [API-Rails] → queue →  [Sidekiq] → orm → [PostgreSQL] → view → [Dashboard]
 
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
 
 # TODOs:
 
@@ -81,3 +61,26 @@ restaurante, cómo son procesados por la API, y cómo se almacenan en la base de
    - Cómo funciona el script de simulación y cómo interactúa con la API.
  - Instrucciones sobre cómo instalar, configurar y ejecutar la aplicación y el script de
  simulación.
+
+
+
+
+Things you may want to cover:
+
+* Ruby version
+
+* System dependencies
+
+* Configuration
+
+* Database creation
+
+* Database initialization
+
+* How to run the test suite
+
+* Services (job queues, cache servers, search engines, etc.)
+
+* Deployment instructions
+
+* ...
