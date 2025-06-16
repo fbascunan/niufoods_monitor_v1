@@ -64,6 +64,7 @@ group :development do
   # gem "spring"
   gem 'foreman'
   gem 'annotate'
+  gem 'rails-erd'
 end
 
 group :test do
