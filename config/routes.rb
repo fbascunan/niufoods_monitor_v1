@@ -12,4 +12,9 @@ Rails.application.routes.draw do
   # root "posts#index"
 
   get 'test_job', to: 'test_jobs#create'  # Added for browser testing
+  namespace :api do
+    namespace :v1 do
+      resources :devices, only: [:update]
+    end
+  end
 end

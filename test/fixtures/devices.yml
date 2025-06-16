@@ -18,13 +18,50 @@
 #
 #  fk_rails_...  (restaurant_id => restaurants.id)
 #
+pos_terminal_1:
+  restaurant: one
+  device_type: pos
+  status: operational
+  last_check_in_at: <%= Time.current - 5.minutes %>
+
+printer_1:
+  restaurant: one
+  device_type: printer
+  status: operational
+  last_check_in_at: <%= Time.current - 2.minutes %>
+
+network_router_1:
+  restaurant: one
+  device_type: network
+  status: operational
+  last_check_in_at: <%= Time.current - 1.minute %>
+
+pos_terminal_2:
+  restaurant: two
+  device_type: pos
+  status: failing
+  last_check_in_at: <%= Time.current - 15.minutes %>
+
+printer_2:
+  restaurant: two
+  device_type: printer
+  status: maintenance
+  last_check_in_at: <%= Time.current - 30.minutes %>
+
+network_router_2:
+  restaurant: two
+  device_type: network
+  status: operational
+  last_check_in_at: <%= Time.current - 3.minutes %>
+
+# old fixtures
 
 one:
   restaurant: one
-  device_type: MyString
-  status: MyString
+  device_type: test
+  status: active
 
 two:
   restaurant: two
-  device_type: MyString
-  status: MyString
+  device_type: test
+  status: active
