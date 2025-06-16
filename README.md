@@ -25,26 +25,23 @@ Things you may want to cover:
 
 # TODOs:
 
-...
+- innitiate the project with sidekiq and postgresql
+- connect to the database with environment variables
+- configure sidekiq
+- use a procfile
+
+- configure tests
+- 
 
 # Prueba Niufoods
 ## Contexto:
- Estás trabajando para una franquicia de alimentos con varios locales en diferentes ciudades. Cada
- restaurante opera una variedad de dispositivos de hardware, tales como terminales de punto de venta
- POS, impresoras de cocina, y sistemas de red, que son cruciales para el funcionamiento diario del
- negocio. Mantener estos dispositivos operativos es fundamental para evitar interrupciones en el
- servicio y garantizar la disponibilidad.
+ Estás trabajando para una franquicia de alimentos con varios locales en diferentes ciudades.
+ Cada restaurante opera una variedad de dispositivos de hardware, tales como terminales de punto de venta POS, impresoras de cocina, y sistemas de red, que son cruciales para el funcionamiento diario del negocio. Mantener estos dispositivos operativos es fundamental para evitar interrupciones en el servicio y garantizar la disponibilidad.
 
- Para asegurar un monitoreo continuo y la alta disponibilidad de estos dispositivos, la franquicia ha
- decidido implementar un sistema centralizado que permita a los restaurantes reportar el estado de
- sus dispositivos a una API central. Además, se requiere que cada restaurante lleve un registro
- detallado de las actualizaciones realizadas en sus dispositivos.
+ Para asegurar un monitoreo continuo y la alta disponibilidad de estos dispositivos, la franquicia ha decidido implementar un sistema centralizado que permita a los restaurantes reportar el estado de sus dispositivos a una API central. Además, se requiere que cada restaurante lleve un registro detallado de las actualizaciones realizadas en sus dispositivos.
 
- Objetivo de la Prueba:
- El objetivo es evaluar tu capacidad para diseñar y desarrollar una API en Ruby on Rails que reciba,
- valide, y procese datos de dispositivos enviados por un script que simule la operación de un
- restaurante. La aplicación debe mostrar estos datos actualizados y debe(OPCIONALMENTE utilizar
- Sidekiq para el procesamiento en segundo plano. PostgreSQL será la base de datos utilizada.
+## Objetivo de la Prueba:
+ El objetivo es evaluar tu capacidad para diseñar y desarrollar una API en Ruby on Rails que reciba, valide, y procese datos de dispositivos enviados por un script que simule la operación de un restaurante. La aplicación debe mostrar estos datos actualizados y debe(OPCIONALMENTE utilizar Sidekiq para el procesamiento en segundo plano. PostgreSQL será la base de datos utilizada.
  
 ## Tareas:
 ### Diagrama de Conexión:
