@@ -1,0 +1,92 @@
+<h1>Restaurant Monitoring Dashboard</h1>
+
+<p>this page haven&apos;t real-time updates yet. please refresh the page to see the latest status.</p>
+
+<table class="restaurants-table">
+  <thead>
+    <tr>
+      <th>Restaurant ID</th>
+      <th>Restaurant Name</th>
+      <th>Overall Status</th>
+      <th>Number of Devices</th>
+      <th>Last Updated</th>
+      <th>Details</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @restaurants.each do |restaurant| %>
+      <tr class="<%= restaurant.status %>">
+      <td><%= restaurant.id %></td>
+        <td><%= restaurant.name %></td>
+        <td>
+          <span class="status-<%= restaurant.status %>">
+            <%= restaurant.status %>
+          </span>
+        </td>
+        <td><%= restaurant.devices.count %></td>
+        <td><%= time_ago_in_words(restaurant.updated_at) %> ago</td>
+        <td><%= link_to 'View Devices', restaurant_path(restaurant) %></td>
+      </tr>
+    <% end %>
+    <% if @restaurants.empty? %>
+      <tr>
+        <td colspan="6">No restaurants found. Start the simulator script to populate data!</td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<style>
+  /* Basic CSS for readability - you can move this to app/assets/stylesheets/application.css */
+  body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f4f4f4;
+  }
+  h1 {
+    color: #333;
+    text-align: center;
+  }
+  .restaurants-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+  .restaurants-table th, .restaurants-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+  }
+  .restaurants-table th {
+    background-color: #007bff;
+    color: white;
+  }
+  .restaurants-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  .restaurants-table tr:hover {
+    background-color: #f1f1f1;
+  }
+  /* Status specific styling */
+  .status-operational {
+    color: green;
+    font-weight: bold;
+  }
+  .status-warning {
+    color: orange;
+    font-weight: bold;
+  }
+  .status-problems {
+    color: red;
+    font-weight: bold;
+  }
+  /* Row highlighting based on status */
+  tr.problems {
+    background-color: #ffe6e6; /* Light red */
+  }
+  tr.warning {
+    background-color: #fff9e6; /* Light orange */
+  }
+</style>

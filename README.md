@@ -1,17 +1,34 @@
 # bosquejo del flujo de la aplicación
 
-[Restaurante(script)] → http → [API-Rails] → queue →  [Sidekiq] → orm → [PostgreSQL] → view → [Dashboard]
+[Restaurante(script)] → http → [API-Rails] → queue →  [Sidekiq] → [Usecase] → orm → [PostgreSQL] → view → [Dashboard]
 
 
 # TODOs:
 
+(done)
 - innitiate the project with sidekiq and postgresql
 - connect to the database with environment variables
 - configure sidekiq
 - use a procfile
-
+- add a script to simulate the device status
 - configure tests
-- 
+
+
+(stage 2)
+- improve the models with a real shape
+- standardize the status of the devices and restaurants
+- evaluat if we will use usecases or services folder
+- add a dashboard 
+- improve the test suite with factories and rspec
+- use the api properly simulating data coming from a restaurant
+- add error management and validations properly
+
+
+(stage 3)
+- cover the border cases
+
+
+
 
 # Prueba Niufoods
 ## Contexto:

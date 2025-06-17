@@ -1,0 +1,139 @@
+<h1><%= @restaurant.name %> - Device Details</h1>
+<p>Overall Status: <span class="status-<%= @restaurant.status %>"><%= @restaurant.status %></span></p>
+
+<h2>Devices:</h2>
+
+<% if @restaurant.devices.any? %>
+  <table class="devices-table">
+    <thead>
+      <tr>
+        <th>Device Type</th>
+        <th>Serial Number</th>
+        <th>Current Status</th>
+        <th>Last Reported At</th>
+        <th>Last Description</th>
+        <th>Full History</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @restaurant.devices.each do |device| %>
+        <tr class="<%= device.last_check_in_at %>">
+          <td><%= device.device_type %></td>
+          <td><%= device.id %></td>
+          <td>
+            <span class="status-<%= device.last_check_in_at %>">
+              <%= device.last_check_in_at %>
+            </span>
+          </td>
+          <td><%= time_ago_in_words(device.last_check_in_at) %> ago</td>
+          <td><%= device.maintenance_logs.last&.description || 'N/A' %></td>
+          <td>
+            <% if device.maintenance_logs.any? %>
+              <details>
+                <summary>View History (<%= device.maintenance_logs.count %> entries)</summary>
+                <ul>
+                  <% device.maintenance_logs.order(performed_at: :desc).each do |update| %>
+                    <li>
+                      [<%= update.performed_at.strftime('%Y-%m-%d %H:%M:%S') %>]
+                      Description: <%= update.description || 'No description' %>
+                    </li>
+                  <% end %>
+                </ul>
+              </details>
+            <% else %>
+              No history.
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p>No devices registered for this restaurant.</p>
+<% end %>
+
+<%= link_to 'Back to All Restaurants', restaurants_path %>
+
+<style>
+  /* Basic CSS for readability - you can move this to app/assets/stylesheets/application.css */
+  body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f4f4f4;
+  }
+  h1, h2 {
+    color: #333;
+    text-align: center;
+    margin-top: 30px;
+  }
+  p {
+    text-align: center;
+  }
+  .devices-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+  .devices-table th, .devices-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+  }
+  .devices-table th {
+    background-color: #007bff;
+    color: white;
+  }
+  .devices-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  .devices-table tr:hover {
+    background-color: #f1f1f1;
+  }
+  /* Status specific styling (re-used from index) */
+  .status-operational {
+    color: green;
+    font-weight: bold;
+  }
+  .status-failing, .status-disconnected {
+    color: red;
+    font-weight: bold;
+  }
+  .status-in_maintenance {
+    color: orange;
+    font-weight: bold;
+  }
+  .status-fixed {
+    color: blue;
+    font-weight: bold;
+  }
+  /* Row highlighting based on device status */
+  tr.failing, tr.disconnected {
+    background-color: #ffe6e6; /* Light red */
+  }
+  tr.in_maintenance {
+    background-color: #fff9e6; /* Light orange */
+  }
+  details {
+    cursor: pointer;
+  }
+  details ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 5px 0;
+    max-height: 150px;
+    overflow-y: auto;
+    border: 1px solid #eee;
+    background-color: #fdfdfd;
+    padding: 10px;
+  }
+  details li {
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+    border-bottom: 1px dashed #eee;
+  }
+  details li:last-child {
+    border-bottom: none;
+  }
+</style>
