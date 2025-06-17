@@ -1,0 +1,29 @@
+### Update device status
+PATCH http://0.0.0.0:5000/api/v1/devices/1
+Content-Type: application/json
+
+{
+  "device": {
+    "status": "active"
+  }
+}
+
+### Another test with different status
+PATCH http://0.0.0.0:5000/api/v1/devices/2
+Content-Type: application/json
+
+{
+  "device": {
+    "status": "inactive"
+  }
+}
+
+### A not found device
+PATCH http://0.0.0.0:5000/api/v1/devices/100
+Content-Type: application/json
+
+{
+  "device": {
+    "status": "inactive"
+  }
+}
