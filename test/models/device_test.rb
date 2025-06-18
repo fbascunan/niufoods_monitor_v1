@@ -5,6 +5,9 @@
 #  id               :bigint           not null, primary key
 #  device_type      :string           not null
 #  last_check_in_at :datetime
+#  model            :string
+#  name             :string
+#  serial_number    :string
 #  status           :string           not null
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null

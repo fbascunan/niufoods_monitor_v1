@@ -5,6 +5,7 @@
 #  id           :bigint           not null, primary key
 #  description  :text
 #  performed_at :datetime         not null
+#  status       :string           default("pending")
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #  device_id    :bigint           not null

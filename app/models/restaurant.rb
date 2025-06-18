@@ -3,8 +3,13 @@
 # Table name: restaurants
 #
 #  id         :bigint           not null, primary key
+#  address    :string
+#  email      :string
+#  location   :string
 #  name       :string           not null
+#  phone      :string
 #  status     :string
+#  timezone   :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
