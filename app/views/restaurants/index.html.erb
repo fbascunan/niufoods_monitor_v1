@@ -5,25 +5,15 @@
 
 <div class="restaurants-container">
   <% @restaurants.each do |restaurant| %>
-    <% 
-      status_mapping = {
-        'activo' => 'operational',
-        'advertencia' => 'warning', 
-        'critico' => 'critical',
-        'inactivo' => 'inactive'
-      }
-      display_status = status_mapping[restaurant.status] || restaurant.status
-    %>
-    
-    <div class="restaurant-card <%= display_status %>" data-restaurant-id="<%= restaurant.id %>">
+    <div class="restaurant-card <%= restaurant.status %>" data-restaurant-id="<%= restaurant.id %>">
       <div class="restaurant-header" onclick="toggleDevices(<%= restaurant.id %>)">
         <div class="restaurant-info">
           <h3><%= restaurant.name %></h3>
           <p class="location"><%= restaurant.location %></p>
         </div>
         <div class="restaurant-status">
-          <span class="status-badge status-<%= display_status %>">
-            <%= display_status %>
+          <span class="status-badge status-<%= restaurant.status %>">
+            <%= restaurant.status %>
           </span>
           <div class="device-count">
             <%= restaurant.devices.count %> devices
@@ -50,7 +40,7 @@
                 }
                 device_display_status = device_status_mapping[device.status] || device.status
               %>
-              <div class="device-card device-<%= device_display_status %>">
+              <div class="device-card device-<%= device_display_status %>" data-device-id="<%= device.id %>" data-restaurant-id="<%= restaurant.id %>">
                 <div class="device-header">
                   <h5><%= device.name %></h5>
                   <span class="device-status status-<%= device_display_status %>">
@@ -63,9 +53,11 @@
                   <p><strong>Serial:</strong> <%= device.serial_number || 'N/A' %></p>
                   <p><strong>Last Check:</strong> 
                     <% if device.last_check_in_at %>
-                      <%= time_ago_in_words(device.last_check_in_at) %> ago
+                      <span class="last-check-time" data-device-id="<%= device.id %>">
+                        <%= time_ago_in_words(device.last_check_in_at) %> ago
+                      </span>
                     <% else %>
-                      Never
+                      <span class="last-check-time" data-device-id="<%= device.id %>">Never</span>
                     <% end %>
                   </p>
                 </div>
