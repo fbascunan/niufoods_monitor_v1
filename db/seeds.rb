@@ -8,63 +8,90 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
-# Create some restaurants with all attributes
+# Create restaurants with all attributes
 restaurants = [
   { 
-    name: "NiuSushi Downtown", 
-    location: "Downtown District",
-    address: "123 Main Street, Downtown",
-    email: "downtown@niusushi.com",
-    phone: "+1-555-0101",
-    timezone: "America/New_York",
+    name: "Niu Sushi - Bar&Delivery - Providencia", 
+    location: "Providencia, Santiago",
+    address: "Av. Providencia 1234, Providencia, Santiago",
+    email: "providencia@niusushi.cl",
+    phone: "+56-2-2345-6789",
+    timezone: "America/Santiago",
     status: "active"
   },
   { 
-    name: "NiuPizza Midtown", 
-    location: "Midtown District",
-    address: "456 Central Ave, Midtown",
-    email: "midtown@niupizza.com",
-    phone: "+1-555-0102",
-    timezone: "America/New_York",
+    name: "Niu Sushi - Bar&Delivery - Las Condes", 
+    location: "Las Condes, Santiago",
+    address: "Av. Apoquindo 2345, Las Condes, Santiago",
+    email: "lascondes@niusushi.cl",
+    phone: "+56-2-2345-6790",
+    timezone: "America/Santiago",
     status: "active"
   },
   { 
-    name: "NiuBurger Uptown", 
-    location: "Uptown District",
-    address: "789 Upper Street, Uptown",
-    email: "uptown@niuburger.com",
-    phone: "+1-555-0103",
-    timezone: "America/New_York",
+    name: "Niu Sushi - Bar&Delivery - Ñuñoa", 
+    location: "Ñuñoa, Santiago",
+    address: "Av. Grecia 3456, Ñuñoa, Santiago",
+    email: "nunoa@niusushi.cl",
+    phone: "+56-2-2345-6791",
+    timezone: "America/Santiago",
     status: "active"
   },
   { 
-    name: "NiuSushi Westside", 
-    location: "Westside District",
-    address: "321 West Blvd, Westside",
-    email: "westside@niusushi.com",
-    phone: "+1-555-0104",
-    timezone: "America/Los_Angeles",
+    name: "Niu Sushi - Bar&Delivery - Valparaíso", 
+    location: "Valparaíso",
+    address: "Av. Argentina 4567, Valparaíso",
+    email: "valparaiso@niusushi.cl",
+    phone: "+56-32-2345-6792",
+    timezone: "America/Santiago",
     status: "active"
   },
   { 
-    name: "NiuPizza Eastside", 
-    location: "Eastside District",
-    address: "654 East Road, Eastside",
-    email: "eastside@niupizza.com",
-    phone: "+1-555-0105",
-    timezone: "America/Chicago",
+    name: "Niu Sushi - Bar&Delivery - Viña del Mar", 
+    location: "Viña del Mar",
+    address: "Av. Libertad 5678, Viña del Mar",
+    email: "vinadelmar@niusushi.cl",
+    phone: "+56-32-2345-6793",
+    timezone: "America/Santiago",
+    status: "active"
+  },
+  { 
+    name: "Niu Sushi - Bar&Delivery - Concepción", 
+    location: "Concepción",
+    address: "Av. Pedro de Valdivia 6789, Concepción",
+    email: "concepcion@niusushi.cl",
+    phone: "+56-41-2345-6794",
+    timezone: "America/Santiago",
+    status: "active"
+  },
+  { 
+    name: "Kao - Oriental Food - Las Condes", 
+    location: "Las Condes, Santiago",
+    address: "Av. Apoquindo 5678, Las Condes, Santiago",
+    email: "contacto@kao.cl",
+    phone: "+56-2-3456-7890",
+    timezone: "America/Santiago",
+    status: "active"
+  },
+  { 
+    name: "Guacamole - Mexican Grill - Ñuñoa", 
+    location: "Ñuñoa, Santiago",
+    address: "Av. Grecia 9012, Ñuñoa, Santiago",
+    email: "hola@guacamole.cl",
+    phone: "+56-2-4567-8901",
+    timezone: "America/Santiago",
     status: "active"
   }
 ]
 
 restaurants.each do |restaurant_data|
-  Restaurant.find_or_create_by!(name: restaurant_data[:name]) do |restaurant|
-    restaurant.location = restaurant_data[:location]
+  Restaurant.find_or_create_by!(name: restaurant_data[:name], location: restaurant_data[:location]) do |restaurant|
     restaurant.address = restaurant_data[:address]
     restaurant.email = restaurant_data[:email]
+    restaurant.location = restaurant_data[:location]
     restaurant.phone = restaurant_data[:phone]
-    restaurant.timezone = restaurant_data[:timezone]
     restaurant.status = restaurant_data[:status]
+    restaurant.timezone = restaurant_data[:timezone]
   end
 end
 

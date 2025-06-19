@@ -13,7 +13,8 @@ API_URL = URI("http://#{API_HOST}:#{API_PORT}#{API_PATH}")
 # Define restaurant and device data matching the seeds
 RESTAURANTS = [
   {
-    name: 'NiuSushi Downtown',
+    name: 'Niu Sushi - Bar&Delivery',
+    location: 'Providencia, Santiago',
     devices: [
       { serial_number: 'POS-1-1-7286A78B', device_type: 'pos', name: 'POS Terminal 1' },
       { serial_number: 'POS-1-2-8C872406', device_type: 'pos', name: 'POS Terminal 2' },
@@ -24,7 +25,8 @@ RESTAURANTS = [
     ]
   },
   {
-    name: 'NiuPizza Midtown',
+    name: 'Niu Sushi - Bar&Delivery',
+    location: 'Las Condes, Santiago',
     devices: [
       { serial_number: 'POS-2-1-FC2C4AAE', device_type: 'pos', name: 'POS Terminal 1' },
       { serial_number: 'POS-2-2-9D1787FE', device_type: 'pos', name: 'POS Terminal 2' },
@@ -35,7 +37,8 @@ RESTAURANTS = [
     ]
   },
   {
-    name: 'NiuBurger Uptown',
+    name: 'Niu Sushi - Bar&Delivery',
+    location: 'Ñuñoa, Santiago',
     devices: [
       { serial_number: 'POS-3-1-99941275', device_type: 'pos', name: 'POS Terminal 1' },
       { serial_number: 'POS-3-2-A9B3EF5C', device_type: 'pos', name: 'POS Terminal 2' },
@@ -46,7 +49,8 @@ RESTAURANTS = [
     ]
   },
   {
-    name: 'NiuSushi Westside',
+    name: 'Niu Sushi - Bar&Delivery',
+    location: 'Valparaíso',
     devices: [
       { serial_number: 'POS-4-1-463943A1', device_type: 'pos', name: 'POS Terminal 1' },
       { serial_number: 'POS-4-2-E9615A66', device_type: 'pos', name: 'POS Terminal 2' },
@@ -57,7 +61,8 @@ RESTAURANTS = [
     ]
   },
   {
-    name: 'NiuPizza Eastside',
+    name: 'Niu Sushi - Bar&Delivery',
+    location: 'Viña del Mar',
     devices: [
       { serial_number: 'POS-5-1-FF7CDC88', device_type: 'pos', name: 'POS Terminal 1' },
       { serial_number: 'POS-5-2-51C495D4', device_type: 'pos', name: 'POS Terminal 2' },
@@ -65,6 +70,42 @@ RESTAURANTS = [
       { serial_number: 'PRN-5-2-ADFAA12E', device_type: 'printer', name: 'Receipt Printer 2' },
       { serial_number: 'NET-5-DA331CF9', device_type: 'network', name: 'Network Router' },
       { serial_number: 'POS-BACKUP-5-D86FEBD0', device_type: 'pos', name: 'Backup POS' }
+    ]
+  },
+  {
+    name: 'Niu Sushi - Bar&Delivery',
+    location: 'Concepción',
+    devices: [
+      { serial_number: 'POS-6-1-B7E8F9A1', device_type: 'pos', name: 'POS Terminal 1' },
+      { serial_number: 'POS-6-2-C8F9A2B3', device_type: 'pos', name: 'POS Terminal 2' },
+      { serial_number: 'PRN-6-1-D9A3B4C5', device_type: 'printer', name: 'Receipt Printer 1' },
+      { serial_number: 'PRN-6-2-E0B4C5D6', device_type: 'printer', name: 'Receipt Printer 2' },
+      { serial_number: 'NET-6-F1C5D6E7', device_type: 'network', name: 'Network Router' },
+      { serial_number: 'POS-BACKUP-6-G2D6E7F8', device_type: 'pos', name: 'Backup POS' }
+    ]
+  },
+  {
+    name: 'Kao - Oriental Food',
+    location: 'Las Condes, Santiago',
+    devices: [
+      { serial_number: 'POS-7-1-H3E7F8G9', device_type: 'pos', name: 'POS Terminal 1' },
+      { serial_number: 'POS-7-2-I4F8G9H0', device_type: 'pos', name: 'POS Terminal 2' },
+      { serial_number: 'PRN-7-1-J5G9H0I1', device_type: 'printer', name: 'Receipt Printer 1' },
+      { serial_number: 'PRN-7-2-K6H0I1J2', device_type: 'printer', name: 'Receipt Printer 2' },
+      { serial_number: 'NET-7-L7I1J2K3', device_type: 'network', name: 'Network Router' },
+      { serial_number: 'POS-BACKUP-7-M8J2K3L4', device_type: 'pos', name: 'Backup POS' }
+    ]
+  },
+  {
+    name: 'Guacamole - Mexican Grill',
+    location: 'Ñuñoa, Santiago',
+    devices: [
+      { serial_number: 'POS-8-1-N9K3L4M5', device_type: 'pos', name: 'POS Terminal 1' },
+      { serial_number: 'POS-8-2-O0L4M5N6', device_type: 'pos', name: 'POS Terminal 2' },
+      { serial_number: 'PRN-8-1-P1M5N6O7', device_type: 'printer', name: 'Receipt Printer 1' },
+      { serial_number: 'PRN-8-2-Q2N6O7P8', device_type: 'printer', name: 'Receipt Printer 2' },
+      { serial_number: 'NET-8-R3O7P8Q9', device_type: 'network', name: 'Network Router' },
+      { serial_number: 'POS-BACKUP-8-S4P8Q9R0', device_type: 'pos', name: 'Backup POS' }
     ]
   }
 ].freeze
