@@ -15,7 +15,10 @@
 #
 # Indexes
 #
+#  index_devices_on_id             (id)
 #  index_devices_on_restaurant_id  (restaurant_id)
+#  index_devices_on_serial_number  (serial_number)
+#  index_devices_on_status         (status)
 #
 # Foreign Keys
 #

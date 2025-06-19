@@ -12,7 +12,9 @@
 #
 # Indexes
 #
-#  index_maintenance_logs_on_device_id  (device_id)
+#  index_maintenance_logs_on_device_id                   (device_id)
+#  index_maintenance_logs_on_device_id_and_performed_at  (device_id,performed_at DESC)
+#  index_maintenance_logs_on_performed_at                (performed_at)
 #
 # Foreign Keys
 #

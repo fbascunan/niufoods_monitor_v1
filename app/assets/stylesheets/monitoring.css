@@ -275,4 +275,27 @@ h1 {
 
 .restaurant-card.inactive {
   border-left-color: var(--medium-gray);
+}
+
+.device-actions {
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid var(--medium-gray);
+}
+
+.history-link {
+  display: inline-block;
+  background-color: var(--niu-black);
+  color: var(--white);
+  padding: 6px 12px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.8em;
+  transition: background-color 0.2s ease;
+}
+
+.history-link:hover {
+  background-color: var(--niu-dark-red);
+  color: var(--white);
+  text-decoration: none;
 } 

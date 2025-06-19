@@ -43,14 +43,14 @@ module Api
           )
         end
         
-        # Trigger background job for additional processing
-        DeviceStatusJob.perform_later(device.id, device.status, permitted_params[:description])
-        
         # Recalculate restaurant status
         device.restaurant.recalculate_status
         
         # Broadcast restaurant status update via WebSocket
         broadcast_restaurant_status(device.restaurant, old_restaurant_status)
+        
+        # Broadcast device status update via WebSocket
+        broadcast_device_status(device)
         
         render json: { 
           message: "Device status updated successfully",
@@ -77,6 +77,31 @@ module Api
         }, status: :internal_server_error
       end
 
+      def test_websocket
+        restaurant = Restaurant.first
+        if restaurant
+          old_status = restaurant.status
+          
+          # Toggle status for testing
+          new_status = restaurant.status == 'activo' ? 'advertencia' : 'activo'
+          restaurant.update!(status: new_status)
+          
+          broadcast_restaurant_status(restaurant, old_status)
+          
+          render json: { 
+            message: "WebSocket test broadcast sent",
+            restaurant: {
+              id: restaurant.id,
+              name: restaurant.name,
+              old_status: old_status,
+              new_status: new_status
+            }
+          }
+        else
+          render json: { error: "No restaurants found" }, status: :not_found
+        end
+      end
+
       private
 
       def status_params
@@ -97,10 +122,34 @@ module Api
         ActionCable.server.broadcast("restaurants_channel", {
           id: restaurant.id,
           name: restaurant.name,
+          location: restaurant.location,
           status: status_mapping[restaurant.status] || restaurant.status,
           old_status: status_mapping[old_status] || old_status,
           devices_count: restaurant.devices.count,
           updated_ago: time_ago_in_words(restaurant.updated_at)
+        })
+      end
+
+      def broadcast_device_status(device)
+        # Map device status to CSS-friendly format
+        status_mapping = {
+          'activo' => 'operational',
+          'advertencia' => 'warning', 
+          'critico' => 'critical',
+          'inactivo' => 'inactive'
+        }
+        
+        ActionCable.server.broadcast("restaurants_channel", {
+          type: 'device_update',
+          device_id: device.id,
+          restaurant_id: device.restaurant.id,
+          name: device.name,
+          device_type: device.device_type,
+          status: status_mapping[device.status] || device.status,
+          model: device.model,
+          serial_number: device.serial_number,
+          last_check_in_at: device.last_check_in_at,
+          updated_ago: time_ago_in_words(device.updated_at)
         })
       end
     end

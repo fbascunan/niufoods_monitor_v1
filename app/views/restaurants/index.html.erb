@@ -1,6 +1,9 @@
 <div class="dashboard-header">
   <%= image_tag "niu-logo.png", alt: "NIU Logo", class: "logo" %>
   <h1>Restaurant Monitoring Dashboard</h1>
+  <div id="websocket-status" style="display: flex; align-items: center; gap: 5px;">
+    <span id="status-indicator" style="width: 10px; height: 10px; border-radius: 50%; background: #ccc;"></span>
+  </div>
 </div>
 
 <div class="restaurants-container">
@@ -25,7 +28,6 @@
       <div class="devices-section" id="devices-<%= restaurant.id %>" style="display: none;">
         <div class="devices-header">
           <h4>Devices</h4>
-          <%= link_to 'View History', restaurant_path(restaurant), class: 'history-btn' %>
         </div>
         
         <% if restaurant.devices.any? %>
@@ -60,6 +62,9 @@
                       <span class="last-check-time" data-device-id="<%= device.id %>">Never</span>
                     <% end %>
                   </p>
+                  <div class="device-actions">
+                    <%= link_to 'View History', device_path(device), class: 'history-link' %>
+                  </div>
                 </div>
               </div>
             <% end %>
@@ -81,6 +86,14 @@
 </div>
 
 <script>
+  // Device status mapping for consistent display
+  const deviceStatusMapping = {
+    'activo': 'operational',
+    'advertencia': 'warning', 
+    'critico': 'critical',
+    'inactivo': 'inactive'
+  };
+
   function toggleDevices(restaurantId) {
     const devicesSection = document.getElementById(`devices-${restaurantId}`);
     const expandIcon = document.getElementById(`expand-${restaurantId}`);

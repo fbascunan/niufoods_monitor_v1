@@ -15,8 +15,8 @@ API_URL = URI("http://#{API_HOST}:#{API_PORT}#{API_PATH}")
 
 # Configuration for simulation
 SIMULATION_CONFIG = {
-  'status_change_probability' => 0.20, # 10% chance of status change per device per cycle
-  'update_interval_seconds' => 2     # Send updates every 30 seconds
+  'status_change_probability' => 0.10, # 10% chance of status change per device per cycle
+  'update_interval_seconds' => 5    # Send updates every 30 seconds
 }
 
 # Available device statuses (using enum keys from Device model)

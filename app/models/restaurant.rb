@@ -15,7 +15,8 @@
 #
 # Indexes
 #
-#  index_restaurants_on_name  (name) UNIQUE
+#  index_restaurants_on_name    (name) UNIQUE
+#  index_restaurants_on_status  (status)
 #
 class Restaurant < ApplicationRecord
     has_many :devices, dependent: :destroy

@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   root "restaurants#index"
-  resources :restaurants, only: [:index, :show]
+  resources :restaurants, only: [:index]
+  resources :devices, only: [:show]
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -13,11 +14,10 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "posts#index"
 
-  get 'test_job', to: 'test_jobs#create'  # Added for browser testing
-  
   namespace :api do
     namespace :v1 do
       post "devices/status", to: "devices#update_status"
+      post "devices/test_websocket", to: "devices#test_websocket"
       resources :restaurants, only: [:index, :show]
     end
   end
