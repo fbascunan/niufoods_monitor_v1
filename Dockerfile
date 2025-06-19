@@ -13,6 +13,35 @@ ENV RAILS_ENV="production" \
     BUNDLE_PATH="/usr/local/bundle" \
     BUNDLE_WITHOUT="development"
 
+# Development stage
+FROM base as development
+
+# Set development environment
+ENV RAILS_ENV="development" \
+    BUNDLE_DEPLOYMENT="0" \
+    BUNDLE_PATH="/usr/local/bundle"
+
+# Install packages needed for development
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y build-essential git libpq-dev libvips pkg-config nodejs npm && \
+    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
+# Install application gems (including development gems)
+COPY Gemfile Gemfile.lock ./
+RUN bundle install
+
+# Copy application code
+COPY . .
+
+# Create necessary directories and set permissions
+RUN mkdir -p tmp/pids tmp/sockets log && \
+    chmod -R 755 tmp log
+
+# Expose port for development
+EXPOSE 5000
+
+# Default command for development
+CMD ["./bin/rails", "server", "-b", "0.0.0.0", "-p", "5000"]
 
 # Throw-away build stage to reduce size of final image
 FROM base as build
@@ -35,7 +64,6 @@ RUN bundle exec bootsnap precompile app/ lib/
 
 # Precompiling assets for production without requiring secret RAILS_MASTER_KEY
 RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
-
 
 # Final stage for app image
 FROM base

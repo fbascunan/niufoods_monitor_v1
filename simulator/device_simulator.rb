@@ -7,16 +7,16 @@ require 'pry'
 # Load Rails environment to access models
 require_relative '../config/environment'
 
-# Configuration for the API endpoint
-API_HOST = '0.0.0.0'
-API_PORT = 5000
+# Configuration for the API endpoint (configurable via environment variables)
+API_HOST = ENV.fetch('API_HOST', '0.0.0.0')
+API_PORT = ENV.fetch('API_PORT', '5000').to_i
 API_PATH = '/api/v1/devices/status'
 API_URL = URI("http://#{API_HOST}:#{API_PORT}#{API_PATH}")
 
 # Configuration for simulation
 SIMULATION_CONFIG = {
   'status_change_probability' => 0.10, # 10% chance of status change per device per cycle
-  'update_interval_seconds' => 5    # Send updates every 30 seconds
+  'update_interval_seconds' => 5    # Send updates every 5 seconds
 }
 
 # Available device statuses (using enum keys from Device model)

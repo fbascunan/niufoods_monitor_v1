@@ -1,0 +1,130 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: niufoods_postgres
+    environment:
+      POSTGRES_DB: niufoods_monitor_v1_development
+      POSTGRES_USER: niufoods_user
+      POSTGRES_PASSWORD: niufoods_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U niufoods_user -d niufoods_monitor_v1_development"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - niufoods_network
+
+  # Redis for Sidekiq
+  redis:
+    image: redis:7-alpine
+    container_name: niufoods_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - niufoods_network
+
+  # Rails Application
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: niufoods_web
+    environment:
+      RAILS_ENV: development
+      RAILS_SERVE_STATIC_FILES: "true"
+      DATABASE_URL: postgresql://niufoods_user:niufoods_password@postgres:5432/niufoods_monitor_v1_development
+      REDIS_URL: redis://redis:6379/0
+      DB_USERNAME: niufoods_user
+      DB_PASSWORD: niufoods_password
+      NIUFOODS_MONITOR_V1_DATABASE_USERNAME: niufoods_user
+      NIUFOODS_MONITOR_V1_DATABASE_PASSWORD: niufoods_password
+    volumes:
+      - .:/rails
+      - bundle_cache:/usr/local/bundle
+    ports:
+      - "5000:5000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: ["./bin/rails", "server", "-b", "0.0.0.0", "-p", "5000"]
+    networks:
+      - niufoods_network
+
+  # Sidekiq Worker
+  sidekiq:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: niufoods_sidekiq
+    environment:
+      RAILS_ENV: development
+      DATABASE_URL: postgresql://niufoods_user:niufoods_password@postgres:5432/niufoods_monitor_v1_development
+      REDIS_URL: redis://redis:6379/0
+      DB_USERNAME: niufoods_user
+      DB_PASSWORD: niufoods_password
+      NIUFOODS_MONITOR_V1_DATABASE_USERNAME: niufoods_user
+      NIUFOODS_MONITOR_V1_DATABASE_PASSWORD: niufoods_password
+    volumes:
+      - .:/rails
+      - bundle_cache:/usr/local/bundle
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: ["./bin/bundle", "exec", "sidekiq", "-C", "config/sidekiq.yml"]
+    networks:
+      - niufoods_network
+
+  # Simulator (optional service)
+  simulator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: niufoods_simulator
+    environment:
+      RAILS_ENV: development
+      DATABASE_URL: postgresql://niufoods_user:niufoods_password@postgres:5432/niufoods_monitor_v1_development
+      REDIS_URL: redis://redis:6379/0
+      API_HOST: web
+      API_PORT: 5000
+    volumes:
+      - .:/rails
+      - bundle_cache:/usr/local/bundle
+    depends_on:
+      web:
+        condition: service_started
+    command: ["./bin/ruby", "simulator/device_simulator.rb"]
+    networks:
+      - niufoods_network
+    profiles:
+      - simulator
+
+volumes:
+  postgres_data:
+  redis_data:
+  bundle_cache:
+
+networks:
+  niufoods_network:
+    driver: bridge 
