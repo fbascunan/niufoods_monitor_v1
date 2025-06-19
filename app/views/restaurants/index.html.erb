@@ -1,7 +1,5 @@
 <h1>Restaurant Monitoring Dashboard</h1>
 
-<p>this page haven&apos;t real-time updates yet. please refresh the page to see the latest status.</p>
-
 <table class="restaurants-table">
   <thead>
     <tr>
@@ -15,12 +13,21 @@
   </thead>
   <tbody>
     <% @restaurants.each do |restaurant| %>
-      <tr class="<%= restaurant.status %>">
+      <% 
+        status_mapping = {
+          'activo' => 'operational',
+          'advertencia' => 'warning', 
+          'critico' => 'critical',
+          'inactivo' => 'inactive'
+        }
+        display_status = status_mapping[restaurant.status] || restaurant.status
+      %>
+      <tr data-restaurant-id="<%= restaurant.id %>" class="<%= display_status %>">
       <td><%= restaurant.id %></td>
         <td><%= restaurant.name %></td>
         <td>
-          <span class="status-<%= restaurant.status %>">
-            <%= restaurant.status %>
+          <span class="status-<%= display_status %>">
+            <%= display_status %>
           </span>
         </td>
         <td><%= restaurant.devices.count %></td>
@@ -78,15 +85,25 @@
     color: orange;
     font-weight: bold;
   }
-  .status-problems {
+  .status-critical {
     color: red;
     font-weight: bold;
   }
+  .status-inactive {
+    color: gray;
+    font-weight: bold;
+  }
   /* Row highlighting based on status */
-  tr.problems {
-    background-color: #ffe6e6; /* Light red */
+  tr.operational {
+    background-color: #e6ffe6; /* Light green */
   }
   tr.warning {
     background-color: #fff9e6; /* Light orange */
+  }
+  tr.critical {
+    background-color: #ffe6e6; /* Light red */
+  }
+  tr.inactive {
+    background-color: #f0f0f0; /* Light gray */
   }
 </style>

@@ -31,11 +31,11 @@ class Restaurant < ApplicationRecord
 
     def recalculate_status
         if devices.any? { |device| device.status == "critical" }
-            update(status: "critical")
+            update(status: :critical)
         elsif devices.any? { |device| device.status == "warning" }
-            update(status: "warning")
+            update(status: :warning)
         else
-            update(status: "active")
+            update(status: :active)
         end
     end
 end
