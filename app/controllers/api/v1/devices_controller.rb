@@ -84,6 +84,8 @@ module Api
       end
       
       def broadcast_restaurant_status(restaurant, old_status)
+        return if restaurant.status == old_status
+        
         # Map restaurant status to CSS-friendly format
         status_mapping = {
           'activo' => 'operational',

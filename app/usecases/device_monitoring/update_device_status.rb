@@ -70,6 +70,8 @@ module DeviceMonitoring
     end
 
     def broadcast_restaurant_status(restaurant, old_restaurant_status)
+      return if restaurant.status == old_restaurant_status
+      
       # Map restaurant status to CSS-friendly format
       status_mapping = {
         'activo' => 'operational',
