@@ -229,6 +229,67 @@ El simulador:
 - `status_after`: Estado posterior
 - `created_at`: Fecha de creación
 
+## 🔄 Modelo de Dominio
+
+![Modelo de Dominio](domain_model.png)
+
+El diagrama muestra las relaciones entre las entidades principales del sistema:
+
+- **Restaurant**: Entidad central que representa un restaurante con sus datos de contacto y estado.
+- **Device**: Representa los dispositivos asociados a un restaurante, con su información de estado y tipo.
+- **MaintenanceLog**: Registra el historial de mantenimiento y cambios de estado de los dispositivos.
+
+## 🔄 Flujo de Implementación
+
+El siguiente diagrama muestra la arquitectura simplificada del sistema y el flujo de datos entre sus componentes principales:
+
+```mermaid
+graph LR
+    subgraph "Core"
+        DB[("Database<br/>PostgreSQL")] --> Models["Models<br/>• Restaurant<br/>• Device<br/>• Logs"]
+        Models --> Logic["Business<br/>Logic"]
+    end
+
+    subgraph "Processing"
+        API["REST API<br/>v1"] --> Queue[("Redis<br/>Queue")]
+        Queue --> Jobs["Sidekiq<br/>Jobs"]
+    end
+
+    subgraph "Interface"
+        UI["Dashboard"] --> RT["Real-time<br/>Updates"]
+    end
+
+    Logic --> API
+    Jobs --> UI
+    
+    style DB fill:#dcedc8,stroke:#81c784,stroke-width:2px,color:#000
+    style Queue fill:#ffecb3,stroke:#ffd54f,stroke-width:2px,color:#000
+    style API fill:#c8e6c9,stroke:#81c784,stroke-width:2px,color:#000
+    style UI fill:#bbdefb,stroke:#64b5f6,stroke-width:2px,color:#000
+    style Models fill:#e8f5e9,stroke:#81c784,stroke-width:2px,color:#000
+    style Logic fill:#e8f5e9,stroke:#81c784,stroke-width:2px,color:#000
+    style Jobs fill:#c8e6c9,stroke:#81c784,stroke-width:2px,color:#000
+    style RT fill:#bbdefb,stroke:#64b5f6,stroke-width:2px,color:#000
+    
+    classDef default fill:#fff,stroke:#333,stroke-width:2px,color:#000
+```
+
+El sistema se divide en tres áreas principales:
+
+1. **Core**: Gestión de datos y lógica de negocio
+   - Base de datos PostgreSQL
+   - Modelos y validaciones
+   - Lógica de negocio
+
+2. **Processing**: Procesamiento de datos
+   - API REST versión 1
+   - Cola Redis para trabajos asíncronos
+   - Jobs de Sidekiq
+
+3. **Interface**: Interfaz de usuario
+   - Dashboard de monitoreo
+   - Actualizaciones en tiempo real
+
 ## 🧪 Testing
 
 ### Con Docker:
