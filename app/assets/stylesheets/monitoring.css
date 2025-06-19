@@ -1,0 +1,278 @@
+:root {
+  --niu-black: #000000;
+  --niu-red: #E31837;  /* NIU brand red */
+  --niu-dark-red: #B31229;
+  --niu-light-red: #FF1A1A;
+  --white: #FFFFFF;
+  --light-gray: #F5F7FA;
+  --medium-gray: #E2E3E5;
+  --dark-gray: #2C3E50;
+  --success-green: #28A745;
+  --warning-yellow: #FFC107;
+  --danger-red: var(--niu-red);
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background-color: var(--light-gray);
+  color: var(--dark-gray);
+}
+
+.dashboard-header {
+  background-color: var(--white);
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dashboard-header img.logo {
+  height: 40px;
+  margin-right: 15px;
+}
+
+h1 {
+  color: var(--niu-black);
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2.5em;
+  font-weight: 500;
+}
+
+.restaurants-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.restaurant-card {
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border-left: 5px solid var(--niu-black);
+}
+
+.restaurant-card:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.restaurant-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.restaurant-header:hover {
+  background-color: var(--light-gray);
+}
+
+.restaurant-info h3 {
+  margin: 0 0 5px 0;
+  color: var(--niu-black);
+  font-size: 1.4em;
+}
+
+.location {
+  margin: 0;
+  color: var(--dark-gray);
+  font-size: 0.9em;
+}
+
+.restaurant-status {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-operational {
+  background-color: var(--success-green);
+  color: var(--white);
+}
+
+.status-warning {
+  background-color: var(--warning-yellow);
+  color: var(--dark-gray);
+}
+
+.status-critical {
+  background-color: var(--danger-red);
+  color: var(--white);
+}
+
+.status-inactive {
+  background-color: var(--medium-gray);
+  color: var(--dark-gray);
+}
+
+.device-count {
+  color: var(--dark-gray);
+  font-size: 0.9em;
+  font-weight: 500;
+}
+
+.expand-icon {
+  color: var(--niu-black);
+  font-size: 1.2em;
+  transition: transform 0.3s ease;
+}
+
+.expanded .expand-icon {
+  transform: rotate(180deg);
+}
+
+.devices-section {
+  border-top: 1px solid var(--medium-gray);
+  background-color: var(--light-gray);
+  padding: 20px;
+}
+
+.devices-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 15px 0;
+}
+
+.devices-header h4 {
+  color: var(--niu-black);
+  margin: 0;
+  font-size: 1.1em;
+}
+
+.history-btn {
+  background-color: var(--niu-black);
+  color: var(--white);
+  padding: 8px 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.9em;
+  transition: background-color 0.2s ease;
+}
+
+.history-btn:hover {
+  background-color: var(--niu-dark-red);
+  color: var(--white);
+  text-decoration: none;
+}
+
+.devices-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 15px;
+  padding: 20px 0;
+}
+
+.device-card {
+  background: var(--white);
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid var(--medium-gray);
+}
+
+.device-card.device-operational {
+  border-left-color: var(--success-green);
+}
+
+.device-card.device-warning {
+  border-left-color: var(--warning-yellow);
+}
+
+.device-card.device-critical {
+  border-left-color: var(--danger-red);
+}
+
+.device-card.device-inactive {
+  border-left-color: var(--medium-gray);
+}
+
+.device-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.device-header h5 {
+  margin: 0;
+  color: var(--niu-black);
+  font-size: 1.1em;
+}
+
+.device-status {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75em;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.device-details p {
+  margin: 5px 0;
+  font-size: 0.9em;
+  color: var(--dark-gray);
+}
+
+.device-details strong {
+  color: var(--dark-gray);
+}
+
+.no-devices {
+  padding: 20px;
+  text-align: center;
+  color: var(--dark-gray);
+}
+
+.no-restaurants {
+  text-align: center;
+  padding: 40px;
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.no-restaurants p {
+  font-size: 1.1em;
+  color: var(--dark-gray);
+  margin: 0;
+}
+
+/* Restaurant card status indicators */
+.restaurant-card.operational {
+  border-left-color: var(--success-green);
+}
+
+.restaurant-card.warning {
+  border-left-color: var(--warning-yellow);
+}
+
+.restaurant-card.critical {
+  border-left-color: var(--danger-red);
+}
+
+.restaurant-card.inactive {
+  border-left-color: var(--medium-gray);
+} 
