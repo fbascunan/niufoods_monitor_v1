@@ -66,6 +66,88 @@ module Api
         assert_equal @device.id, enqueued_job[:args][0]
         assert_equal old_restaurant_status, enqueued_job[:args][1]
       end
+
+      test "should handle invalid status parameter" do
+        put api_v1_device_path(@device), params: { 
+          device: { 
+            status: "invalid_status",
+            description: "Test update"
+          } 
+        }
+        
+        assert_response :unprocessable_entity
+        response_body = JSON.parse(@response.body)
+        assert_equal "Failed to update device status", response_body["error"]
+      end
+
+      test "should handle missing status parameter" do
+        put api_v1_device_path(@device), params: { 
+          device: { 
+            description: "Test update"
+          } 
+        }
+        
+        assert_response :unprocessable_entity
+        response_body = JSON.parse(@response.body)
+        assert_equal "Failed to update device status", response_body["error"]
+      end
+
+      test "should handle empty device parameters" do
+        put api_v1_device_path(@device), params: { device: {} }
+        
+        assert_response :unprocessable_entity
+        response_body = JSON.parse(@response.body)
+        assert_equal "Failed to update device status", response_body["error"]
+      end
+
+      test "should handle malformed JSON" do
+        put api_v1_device_path(@device), 
+            params: "invalid json",
+            headers: { 'CONTENT_TYPE' => 'application/json' }
+        
+        assert_response :bad_request
+      end
+
+      test "should update device with all valid parameters" do
+        put api_v1_device_path(@device), params: { 
+          device: { 
+            status: "advertencia",
+            description: "Device showing warning signs",
+            device_type: "printer",
+            last_check_in_at: Time.current
+          } 
+        }
+        
+        assert_response :ok
+        response_body = JSON.parse(@response.body)
+        assert_equal "Device status updated successfully. WebSocket update will be broadcast in 5 seconds.", response_body["message"]
+      end
+
+      test "should handle critical status update" do
+        put api_v1_device_path(@device), params: { 
+          device: { 
+            status: "critico",
+            description: "Critical device failure"
+          } 
+        }
+        
+        assert_response :ok
+        response_body = JSON.parse(@response.body)
+        assert_equal "Device status updated successfully. WebSocket update will be broadcast in 5 seconds.", response_body["message"]
+      end
+
+      test "should handle inactive status update" do
+        put api_v1_device_path(@device), params: { 
+          device: { 
+            status: "inactivo",
+            description: "Device deactivated"
+          } 
+        }
+        
+        assert_response :ok
+        response_body = JSON.parse(@response.body)
+        assert_equal "Device status updated successfully. WebSocket update will be broadcast in 5 seconds.", response_body["message"]
+      end
     end
   end
 end 

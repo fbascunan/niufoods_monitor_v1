@@ -27,47 +27,53 @@
 pos_terminal_1:
   restaurant: one
   device_type: pos
-  status: operational
+  status: activo
+  serial_number: "POS001"
+  name: "POS Terminal 1"
+  model: "POS-2000"
   last_check_in_at: <%= Time.current - 5.minutes %>
 
 printer_1:
   restaurant: one
   device_type: printer
-  status: operational
+  status: activo
+  serial_number: "PRN001"
+  name: "Receipt Printer 1"
+  model: "RP-100"
   last_check_in_at: <%= Time.current - 2.minutes %>
 
 network_router_1:
   restaurant: one
   device_type: network
-  status: operational
+  status: activo
+  serial_number: "NET001"
+  name: "Network Router 1"
+  model: "NR-500"
   last_check_in_at: <%= Time.current - 1.minute %>
 
 pos_terminal_2:
   restaurant: two
   device_type: pos
-  status: failing
+  status: critico
+  serial_number: "POS002"
+  name: "POS Terminal 2"
+  model: "POS-2000"
   last_check_in_at: <%= Time.current - 15.minutes %>
 
 printer_2:
   restaurant: two
   device_type: printer
-  status: maintenance
+  status: advertencia
+  serial_number: "PRN002"
+  name: "Receipt Printer 2"
+  model: "RP-100"
   last_check_in_at: <%= Time.current - 30.minutes %>
 
 network_router_2:
   restaurant: two
   device_type: network
-  status: operational
+  status: activo
+  serial_number: "NET002"
+  name: "Network Router 2"
+  model: "NR-500"
   last_check_in_at: <%= Time.current - 3.minutes %>
-
-# old fixtures
-
-one:
-  restaurant: one
-  device_type: test
-  status: active
-
-two:
-  restaurant: two
-  device_type: test
-  status: active

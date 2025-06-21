@@ -38,11 +38,12 @@ module DeviceMonitoring
         # Update device status
         device.update!(status: @status, last_check_in_at: @last_check_in_at)
         
-        # Create maintenance log
+        # Create maintenance log with device_status and maintenance_status
         device.maintenance_logs.create!(
           description: description,
           performed_at: last_check_in_at,
-          status: status,
+          device_status: status,
+          maintenance_status: "completed"
         )
 
         # Recalculate restaurant status

@@ -153,7 +153,8 @@ Device.find_each do |device|
     device: device,
     description: "Regular maintenance check and system update",
     performed_at: 1.day.ago,
-    status: "completed"
+    device_status: device.status,
+    maintenance_status: "completed"
   )
 
   # Create a maintenance log for devices with warning status
@@ -162,7 +163,8 @@ Device.find_each do |device|
       device: device,
       description: "Device showing warning signs - diagnostic check performed",
       performed_at: 6.hours.ago,
-      status: "pending"
+      device_status: device.status,
+      maintenance_status: "pending"
     )
   end
 
@@ -172,7 +174,8 @@ Device.find_each do |device|
       device: device,
       description: "Scheduled maintenance #{i + 1}",
       performed_at: (i + 2).days.ago,
-      status: "completed"
+      device_status: device.status,
+      maintenance_status: "completed"
     )
   end
 end

@@ -3,7 +3,7 @@ require "test_helper"
 class UpdateDeviceStatusTest < ActiveSupport::TestCase
     def setup
     @restaurant = restaurants(:one)
-    @device = devices(:one)
+    @device = devices(:pos_terminal_1)
     @serial_number = @device.serial_number
     @device_type = @device.device_type
     @status = "activo"
@@ -35,7 +35,7 @@ class UpdateDeviceStatusTest < ActiveSupport::TestCase
     maintenance_log = @device.maintenance_logs.last
     assert_equal @last_check_in_at, maintenance_log.performed_at
     assert_equal @description, maintenance_log.description
-    assert_equal @status, maintenance_log.status
+    assert_equal @status, maintenance_log.device_status
     end
 
     test "schedules websocket broadcast job with restaurant ID" do
@@ -97,5 +97,82 @@ class UpdateDeviceStatusTest < ActiveSupport::TestCase
     )
     
     assert_not usecase.call
+    end
+
+    test "returns false when restaurant not found" do
+    usecase = DeviceMonitoring::UpdateDeviceStatus.new(
+        @serial_number,
+        @device_type,
+        @status,
+        @description,
+        @last_check_in_at,
+        "Invalid Restaurant"
+    )
+    
+    assert_not usecase.call
+    end
+
+    test "handles warning status correctly" do
+    usecase = DeviceMonitoring::UpdateDeviceStatus.new(
+        @serial_number,
+        @device_type,
+        "advertencia",
+        @description,
+        @last_check_in_at,
+        @restaurant_name
+    )
+    
+    assert usecase.call
+    @device.reload
+    assert_equal "advertencia", @device.status
+    end
+
+    test "handles critical status correctly" do
+    usecase = DeviceMonitoring::UpdateDeviceStatus.new(
+        @serial_number,
+        @device_type,
+        "critico",
+        @description,
+        @last_check_in_at,
+        @restaurant_name
+    )
+    
+    assert usecase.call
+    @device.reload
+    assert_equal "critico", @device.status
+    end
+
+    test "handles inactive status correctly" do
+    usecase = DeviceMonitoring::UpdateDeviceStatus.new(
+        @serial_number,
+        @device_type,
+        "inactivo",
+        @description,
+        @last_check_in_at,
+        @restaurant_name
+    )
+    
+    assert usecase.call
+    @device.reload
+    assert_equal "inactivo", @device.status
+    end
+
+    test "creates maintenance log with correct attributes" do
+    @usecase.call
+    
+    maintenance_log = @device.maintenance_logs.last
+    assert_not_nil maintenance_log
+    assert_equal @description, maintenance_log.description
+    assert_equal @last_check_in_at, maintenance_log.performed_at
+    assert_equal @status, maintenance_log.device_status
+    end
+
+    test "updates last_check_in_at timestamp" do
+    old_check_in = @device.last_check_in_at
+    @usecase.call
+    
+    @device.reload
+    assert_not_equal old_check_in, @device.last_check_in_at
+    assert_equal @last_check_in_at, @device.last_check_in_at
     end
 end

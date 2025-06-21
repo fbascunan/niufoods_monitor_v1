@@ -3,7 +3,7 @@ require "test_helper"
 class WebsocketBroadcastJobTest < ActiveJob::TestCase
   def setup
     @restaurant = restaurants(:one)
-    @device = devices(:one)
+    @device = devices(:pos_terminal_1)
     @old_status = 'activo'
   end
 
@@ -82,6 +82,93 @@ class WebsocketBroadcastJobTest < ActiveJob::TestCase
         device_data = data[:devices].first
         assert_equal "operational", device_data[:status] if device_data[:status] == 'activo'
       end
+    end
+  end
+
+  test "should handle restaurant with no devices" do
+    empty_restaurant = Restaurant.create!(name: "Empty Restaurant")
+    
+    ActionCable.server.stub :broadcast, true do
+      WebsocketBroadcastJob.perform_now(empty_restaurant.id, @old_status)
+      
+      broadcast_args = ActionCable.server.broadcast_calls.last
+      data = broadcast_args[1]
+      
+      assert_equal 0, data[:devices].length
+      assert_equal 0, data[:restaurant][:devices_count]
+    end
+  end
+
+  test "should include timestamp in broadcast" do
+    ActionCable.server.stub :broadcast, true do
+      WebsocketBroadcastJob.perform_now(@restaurant.id, @old_status)
+      
+      broadcast_args = ActionCable.server.broadcast_calls.last
+      data = broadcast_args[1]
+      
+      assert_not_nil data[:timestamp]
+      assert_kind_of String, data[:timestamp]
+    end
+  end
+
+  test "should handle different old status values" do
+    old_statuses = ['activo', 'advertencia', 'critico', 'inactivo']
+    
+    old_statuses.each do |status|
+      ActionCable.server.stub :broadcast, true do
+        WebsocketBroadcastJob.perform_now(@restaurant.id, status)
+        
+        broadcast_args = ActionCable.server.broadcast_calls.last
+        data = broadcast_args[1]
+        
+        assert_equal status, data[:restaurant][:old_status]
+      end
+    end
+  end
+
+  test "should include device maintenance logs count" do
+    # Create some maintenance logs for the device
+    @device.maintenance_logs.create!(
+      description: "Test maintenance",
+      performed_at: Time.current,
+      status: "completed"
+    )
+    
+    ActionCable.server.stub :broadcast, true do
+      WebsocketBroadcastJob.perform_now(@restaurant.id, @old_status)
+      
+      broadcast_args = ActionCable.server.broadcast_calls.last
+      data = broadcast_args[1]
+      
+      if data[:devices].any?
+        device_data = data[:devices].first
+        assert_not_nil device_data[:maintenance_logs_count]
+      end
+    end
+  end
+
+  test "should handle nil old status" do
+    ActionCable.server.stub :broadcast, true do
+      WebsocketBroadcastJob.perform_now(@restaurant.id, nil)
+      
+      broadcast_args = ActionCable.server.broadcast_calls.last
+      data = broadcast_args[1]
+      
+      assert_nil data[:restaurant][:old_status]
+    end
+  end
+
+  test "should include restaurant status change information" do
+    @restaurant.update!(status: :critical)
+    
+    ActionCable.server.stub :broadcast, true do
+      WebsocketBroadcastJob.perform_now(@restaurant.id, @old_status)
+      
+      broadcast_args = ActionCable.server.broadcast_calls.last
+      data = broadcast_args[1]
+      
+      assert_equal "critico", data[:restaurant][:status]
+      assert_equal "activo", data[:restaurant][:old_status]
     end
   end
 end 

@@ -19,12 +19,20 @@
 #  index_restaurants_on_status  (status)
 #
 
-
-
 one:
-  name: Restaurante 1
-  status: active
+  name: "Restaurante El Buen Sabor"
+  status: activo
+  location: "Centro Comercial Plaza Mayor"
+  address: "Calle Principal 123, Ciudad"
+  phone: "+1-555-0123"
+  email: "info@elbuensabor.com"
+  timezone: "America/Mexico_City"
 
 two:
-  name: Restaurante 2
-  status: active
+  name: "Restaurante La Esquina"
+  status: advertencia
+  location: "Zona Rosa"
+  address: "Avenida Reforma 456, Ciudad"
+  phone: "+1-555-0456"
+  email: "contacto@laesquina.com"
+  timezone: "America/Mexico_City"
