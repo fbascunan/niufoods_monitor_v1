@@ -91,6 +91,16 @@ h1 {
   font-size: 0.9em;
 }
 
+.details-link {
+  color: var(--niu-black);
+  text-decoration: none;
+  margin-left: 8px;
+}
+
+.details-link:hover {
+  color: var(--niu-dark-red);
+}
+
 .restaurant-status {
   display: flex;
   align-items: center;
@@ -298,4 +308,30 @@ h1 {
   background-color: var(--niu-dark-red);
   color: var(--white);
   text-decoration: none;
+}
+
+.btn {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9em;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-details {
+  background-color: var(--niu-red);
+  color: var(--white);
+  border: 1px solid var(--niu-red);
+}
+
+.btn-details:hover {
+  background-color: var(--niu-dark-red);
+  color: var(--white);
+  text-decoration: none;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(227, 24, 55, 0.3);
 } 

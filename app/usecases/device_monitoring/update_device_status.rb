@@ -4,6 +4,8 @@ module DeviceMonitoring
 
     attr_reader :serial_number, :device_type, :status, :description, :last_check_in_at, :restaurant_name
 
+    VALID_DEVICE_TYPES = %w[pos printer network].freeze
+
     def initialize(serial_number, device_type, status, description, last_check_in_at, restaurant_name)
       @serial_number = serial_number
       @device_type = device_type
@@ -71,7 +73,7 @@ module DeviceMonitoring
     def validate_device_type(device)
       # Only validate if device_type is provided and different from current
       if @device_type.present? && @device_type != device.device_type
-        raise "Invalid device type: #{@device_type}" unless Device.device_types.include?(@device_type)
+        raise "Invalid device type: #{@device_type}" unless VALID_DEVICE_TYPES.include?(@device_type)
       end
     end
 

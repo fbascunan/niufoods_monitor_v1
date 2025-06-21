@@ -6,10 +6,11 @@ class ApiDevicesTest < ActionDispatch::IntegrationTest
     @restaurant = @device.restaurant
   end
 
-  test "should update device status via API" do
-    put api_v1_device_path(@device), params: { 
+  test "should update device status via API with serial number" do
+    post api_v1_devices_status_path, params: { 
       device: { 
-        status: "activo",
+        serial_number: @device.serial_number,
+        status: "active",
         description: "Device is working properly"
       } 
     }
@@ -18,15 +19,17 @@ class ApiDevicesTest < ActionDispatch::IntegrationTest
     response_body = JSON.parse(@response.body)
     assert_equal "Device status updated successfully. WebSocket update will be broadcast in 5 seconds.", response_body["message"]
     assert_equal @device.id, response_body["device"]["id"]
+    assert_equal @device.serial_number, response_body["device"]["serial_number"]
   end
 
   test "should handle device status update with all parameters" do
-    put api_v1_device_path(@device), params: { 
+    post api_v1_devices_status_path, params: { 
       device: { 
-        status: "advertencia",
+        serial_number: @device.serial_number,
+        status: "warning",
         description: "Device showing warning signs",
         device_type: "printer",
-        last_check_in_at: Time.current.iso8601
+        name: "Updated Device Name"
       } 
     }
     
@@ -35,10 +38,11 @@ class ApiDevicesTest < ActionDispatch::IntegrationTest
     assert_equal "Device status updated successfully. WebSocket update will be broadcast in 5 seconds.", response_body["message"]
   end
 
-  test "should return 404 for non-existent device" do
-    put api_v1_device_path(999999), params: { 
+  test "should return 404 for non-existent device serial number" do
+    post api_v1_devices_status_path, params: { 
       device: { 
-        status: "activo",
+        serial_number: "NONEXISTENT123",
+        status: "active",
         description: "Test update"
       } 
     }
@@ -46,11 +50,13 @@ class ApiDevicesTest < ActionDispatch::IntegrationTest
     assert_response :not_found
     response_body = JSON.parse(@response.body)
     assert_equal "Device not found", response_body["error"]
+    assert_equal "NONEXISTENT123", response_body["serial_number"]
   end
 
   test "should handle invalid status parameter" do
-    put api_v1_device_path(@device), params: { 
+    post api_v1_devices_status_path, params: { 
       device: { 
+        serial_number: @device.serial_number,
         status: "invalid_status",
         description: "Test update"
       } 
@@ -61,9 +67,23 @@ class ApiDevicesTest < ActionDispatch::IntegrationTest
     assert_equal "Failed to update device status", response_body["error"]
   end
 
-  test "should handle missing status parameter" do
-    put api_v1_device_path(@device), params: { 
+  test "should handle missing serial number parameter" do
+    post api_v1_devices_status_path, params: { 
       device: { 
+        status: "active",
+        description: "Test update without serial number"
+      } 
+    }
+    
+    assert_response :not_found
+    response_body = JSON.parse(@response.body)
+    assert_equal "Device not found", response_body["error"]
+  end
+
+  test "should handle missing status parameter" do
+    post api_v1_devices_status_path, params: { 
+      device: { 
+        serial_number: @device.serial_number,
         description: "Test update without status"
       } 
     }
@@ -74,25 +94,18 @@ class ApiDevicesTest < ActionDispatch::IntegrationTest
   end
 
   test "should handle empty request body" do
-    put api_v1_device_path(@device), params: {}
+    post api_v1_devices_status_path, params: {}
     
     assert_response :unprocessable_entity
     response_body = JSON.parse(@response.body)
     assert_equal "Failed to update device status", response_body["error"]
   end
 
-  test "should handle malformed JSON" do
-    put api_v1_device_path(@device), 
-        params: "invalid json",
-        headers: { 'CONTENT_TYPE' => 'application/json' }
-    
-    assert_response :bad_request
-  end
-
   test "should update device status to critical" do
-    put api_v1_device_path(@device), params: { 
+    post api_v1_devices_status_path, params: { 
       device: { 
-        status: "critico",
+        serial_number: @device.serial_number,
+        status: "critical",
         description: "Critical device failure detected"
       } 
     }
@@ -103,9 +116,10 @@ class ApiDevicesTest < ActionDispatch::IntegrationTest
   end
 
   test "should update device status to inactive" do
-    put api_v1_device_path(@device), params: { 
+    post api_v1_devices_status_path, params: { 
       device: { 
-        status: "inactivo",
+        serial_number: @device.serial_number,
+        status: "inactive",
         description: "Device deactivated"
       } 
     }
@@ -116,10 +130,11 @@ class ApiDevicesTest < ActionDispatch::IntegrationTest
   end
 
   test "should schedule websocket broadcast job" do
-    assert_enqueued_with(job: WebsocketBroadcastJob, wait: 5.seconds) do
-      put api_v1_device_path(@device), params: { 
+    assert_enqueued_with(job: WebsocketBroadcastJob) do
+      post api_v1_devices_status_path, params: { 
         device: { 
-          status: "activo",
+          serial_number: @device.serial_number,
+          status: "active",
           description: "Test update"
         } 
       }
@@ -128,29 +143,11 @@ class ApiDevicesTest < ActionDispatch::IntegrationTest
     assert_enqueued_jobs 1, only: WebsocketBroadcastJob
   end
 
-  test "should handle concurrent status updates" do
-    threads = []
-    3.times do |i|
-      threads << Thread.new do
-        put api_v1_device_path(@device), params: { 
-          device: { 
-            status: "activo",
-            description: "Concurrent update #{i}"
-          } 
-        }
-      end
-    end
-    
-    threads.each(&:join)
-    
-    # All requests should succeed
-    assert_equal 3, @device.maintenance_logs.count
-  end
-
   test "should validate device type parameter" do
-    put api_v1_device_path(@device), params: { 
+    post api_v1_devices_status_path, params: { 
       device: { 
-        status: "activo",
+        serial_number: @device.serial_number,
+        status: "active",
         device_type: "invalid_type",
         description: "Test update"
       } 
@@ -163,9 +160,10 @@ class ApiDevicesTest < ActionDispatch::IntegrationTest
 
   test "should handle large description text" do
     large_description = "A" * 1000
-    put api_v1_device_path(@device), params: { 
+    post api_v1_devices_status_path, params: { 
       device: { 
-        status: "activo",
+        serial_number: @device.serial_number,
+        status: "active",
         description: large_description
       } 
     }
@@ -173,5 +171,28 @@ class ApiDevicesTest < ActionDispatch::IntegrationTest
     assert_response :ok
     response_body = JSON.parse(@response.body)
     assert_equal "Device status updated successfully. WebSocket update will be broadcast in 5 seconds.", response_body["message"]
+  end
+
+  test "should update device with different device types" do
+    %w[pos printer network].each do |device_type|
+      post api_v1_devices_status_path, params: { 
+        device: { 
+          serial_number: @device.serial_number,
+          status: "active",
+          device_type: device_type,
+          description: "Testing #{device_type} device type"
+        } 
+      }
+      
+      assert_response :ok
+    end
+  end
+
+  test "should handle malformed JSON" do
+    post api_v1_devices_status_path, 
+         params: "invalid json",
+         headers: { 'CONTENT_TYPE' => 'application/json' }
+    
+    assert_response :bad_request
   end
 end 

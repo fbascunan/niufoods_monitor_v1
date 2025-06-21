@@ -4,6 +4,14 @@ module Api
       include ActionView::Helpers::DateHelper
       
       def update_status
+        # Handle empty request body
+        unless params[:device]
+          return render json: { 
+            error: "Failed to update device status",
+            details: "Missing device parameters"
+          }, status: :unprocessable_entity
+        end
+
         serial_number = params[:device][:serial_number]        
         device = Device.find_by(serial_number: serial_number)
         
@@ -49,12 +57,12 @@ module Api
           error: "Validation error", 
           details: e.record.errors.full_messages 
         }, status: :unprocessable_entity
-      rescue StandardError => e
-        Rails.logger.error "Error updating device status: #{e.message}"
+      rescue ActionDispatch::Http::Parameters::ParseError => e
+        Rails.logger.error "Parse error updating device status: #{e.message}"
         render json: { 
-          error: "Internal server error",
-          message: e.message
-        }, status: :internal_server_error
+          error: "Bad request", 
+          details: e.message 
+        }, status: :bad_request
       end
 
       private

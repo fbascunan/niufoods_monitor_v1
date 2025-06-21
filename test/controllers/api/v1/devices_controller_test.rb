@@ -9,10 +9,11 @@ module Api
       end
 
       test "should update device status using use case" do
-        assert_enqueued_with(job: WebsocketBroadcastJob, wait: 5.seconds) do
-          put api_v1_device_path(@device), params: { 
+        assert_enqueued_with(job: WebsocketBroadcastJob, at: 5.seconds.from_now) do
+          post api_v1_devices_status_path, params: { 
             device: { 
-              status: "activo",
+              serial_number: @device.serial_number,
+              status: "active",
               description: "Test update",
               device_type: "pos"
             } 
@@ -27,7 +28,12 @@ module Api
       end
 
       test "should return not found for non-existent device" do
-        put api_v1_device_path(0), params: { device: { status: "activo" } }
+        post api_v1_devices_status_path, params: { 
+          device: { 
+            serial_number: "NONEXISTENT",
+            status: "active" 
+          } 
+        }
         
         assert_response :not_found
         assert_equal "Device not found", JSON.parse(@response.body)["error"]
@@ -35,11 +41,14 @@ module Api
 
       test "should handle use case failure gracefully" do
         # Mock the use case to return false
-        DeviceMonitoring::UpdateDeviceStatus.any_instance.stubs(:call).returns(false)
+        use_case_mock = mock
+        use_case_mock.expects(:call).returns(false)
+        DeviceMonitoring::UpdateDeviceStatus.expects(:new).returns(use_case_mock)
         
-        put api_v1_device_path(@device), params: { 
+        post api_v1_devices_status_path, params: { 
           device: { 
-            status: "activo",
+            serial_number: @device.serial_number,
+            status: "active",
             description: "Test update"
           } 
         }
@@ -51,10 +60,11 @@ module Api
       test "should schedule websocket broadcast job with correct parameters" do
         old_restaurant_status = @restaurant.status
         
-        assert_enqueued_with(job: WebsocketBroadcastJob, wait: 5.seconds) do
-          put api_v1_device_path(@device), params: { 
+        assert_enqueued_with(job: WebsocketBroadcastJob, at: 5.seconds.from_now) do
+          post api_v1_devices_status_path, params: { 
             device: { 
-              status: "activo",
+              serial_number: @device.serial_number,
+              status: "active",
               description: "Test update"
             } 
           }
@@ -63,13 +73,14 @@ module Api
         # Check that the job was enqueued with correct arguments
         assert_enqueued_jobs 1, only: WebsocketBroadcastJob
         enqueued_job = ActiveJob::Base.queue_adapter.enqueued_jobs.last
-        assert_equal @device.id, enqueued_job[:args][0]
+        assert_equal @restaurant.id, enqueued_job[:args][0]
         assert_equal old_restaurant_status, enqueued_job[:args][1]
       end
 
       test "should handle invalid status parameter" do
-        put api_v1_device_path(@device), params: { 
+        post api_v1_devices_status_path, params: { 
           device: { 
+            serial_number: @device.serial_number,
             status: "invalid_status",
             description: "Test update"
           } 
@@ -81,8 +92,9 @@ module Api
       end
 
       test "should handle missing status parameter" do
-        put api_v1_device_path(@device), params: { 
+        post api_v1_devices_status_path, params: { 
           device: { 
+            serial_number: @device.serial_number,
             description: "Test update"
           } 
         }
@@ -93,7 +105,7 @@ module Api
       end
 
       test "should handle empty device parameters" do
-        put api_v1_device_path(@device), params: { device: {} }
+        post api_v1_devices_status_path, params: { device: {} }
         
         assert_response :unprocessable_entity
         response_body = JSON.parse(@response.body)
@@ -101,7 +113,7 @@ module Api
       end
 
       test "should handle malformed JSON" do
-        put api_v1_device_path(@device), 
+        post api_v1_devices_status_path, 
             params: "invalid json",
             headers: { 'CONTENT_TYPE' => 'application/json' }
         
@@ -109,9 +121,10 @@ module Api
       end
 
       test "should update device with all valid parameters" do
-        put api_v1_device_path(@device), params: { 
+        post api_v1_devices_status_path, params: { 
           device: { 
-            status: "advertencia",
+            serial_number: @device.serial_number,
+            status: "warning",
             description: "Device showing warning signs",
             device_type: "printer",
             last_check_in_at: Time.current
@@ -124,9 +137,10 @@ module Api
       end
 
       test "should handle critical status update" do
-        put api_v1_device_path(@device), params: { 
+        post api_v1_devices_status_path, params: { 
           device: { 
-            status: "critico",
+            serial_number: @device.serial_number,
+            status: "critical",
             description: "Critical device failure"
           } 
         }
@@ -137,9 +151,10 @@ module Api
       end
 
       test "should handle inactive status update" do
-        put api_v1_device_path(@device), params: { 
+        post api_v1_devices_status_path, params: { 
           device: { 
-            status: "inactivo",
+            serial_number: @device.serial_number,
+            status: "inactive",
             description: "Device deactivated"
           } 
         }

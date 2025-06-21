@@ -67,7 +67,8 @@ class DeviceTest < ActiveSupport::TestCase
     maintenance_log = @device.maintenance_logs.create!(
       description: "Test log",
       performed_at: Time.current,
-      status: "completed"
+      device_status: "activo",
+      maintenance_status: "completed"
     )
     
     @device.destroy

@@ -147,6 +147,8 @@ GEM
     method_source (1.1.0)
     mini_mime (1.1.5)
     minitest (5.25.5)
+    mocha (2.7.1)
+      ruby2_keywords (>= 0.0.5)
     msgpack (1.8.0)
     mutex_m (0.3.0)
     net-imap (0.5.8)
@@ -243,6 +245,7 @@ GEM
     rexml (3.4.1)
     ruby-graphviz (1.2.5)
       rexml
+    ruby2_keywords (0.0.5)
     rubyzip (2.4.1)
     securerandom (0.4.1)
     selenium-webdriver (4.33.0)
@@ -312,6 +315,7 @@ DEPENDENCIES
   foreman
   importmap-rails
   jbuilder
+  mocha
   pg (~> 1.1)
   pry
   puma (>= 5.0)
