@@ -28,7 +28,6 @@ class Device < ApplicationRecord
   belongs_to :restaurant
   has_many :maintenance_logs, dependent: :destroy
 
-
   enum status: {
     active: "activo",
     warning: "advertencia",
@@ -36,5 +35,16 @@ class Device < ApplicationRecord
     inactive: "inactivo"
   }
 
-  validates :status, inclusion: { in: statuses.keys }
+  validates :device_type, presence: true
+  validates :restaurant, presence: true
+  validates :status, presence: true
+
+  # Update last_check_in_at when status changes
+  before_update :update_last_check_in_at, if: :status_changed?
+
+  private
+
+  def update_last_check_in_at
+    self.last_check_in_at = Time.current
+  end
 end

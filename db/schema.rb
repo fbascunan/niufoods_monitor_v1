@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_06_19_204634) do
+ActiveRecord::Schema[7.1].define(version: 2025_06_21_025603) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -36,7 +36,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_19_204634) do
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "status", default: "pending"
+    t.string "device_status"
+    t.string "maintenance_status", default: "pending"
     t.index ["device_id", "performed_at"], name: "index_maintenance_logs_on_device_id_and_performed_at", order: { performed_at: :desc }
     t.index ["device_id"], name: "index_maintenance_logs_on_device_id"
     t.index ["performed_at"], name: "index_maintenance_logs_on_performed_at", order: :desc

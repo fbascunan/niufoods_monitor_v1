@@ -63,9 +63,18 @@
                   <span class="log-timestamp" data-timestamp="<%= log.performed_at.iso8601 %>">
                     <%= log.performed_at.strftime('%B %d, %Y at %I:%M %p') %>
                   </span>
-                  <% if log.status.present? %>
-                    <span class="log-status status-<%= log.status %>"><%= log.status %></span>
-                  <% end %>
+                  <div class="log-statuses">
+                    <% if log.device_status.present? %>
+                      <span class="log-status device-status status-<%= log.device_status %>" title="Device Status">
+                        Device: <%= log.device_status %>
+                      </span>
+                    <% end %>
+                    <% if log.maintenance_status.present? %>
+                      <span class="log-status maintenance-status status-<%= log.maintenance_status %>" title="Maintenance Status">
+                        Maintenance: <%= log.maintenance_status %>
+                      </span>
+                    <% end %>
+                  </div>
                 </div>
                 <div class="log-description">
                   <%= log.description || 'No description provided' %>
@@ -297,6 +306,11 @@
     font-weight: 600;
     color: #495057;
     font-size: 0.9em;
+  }
+
+  .log-statuses {
+    display: flex;
+    gap: 5px;
   }
 
   .log-status {

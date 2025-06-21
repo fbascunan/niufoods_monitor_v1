@@ -2,13 +2,14 @@
 #
 # Table name: maintenance_logs
 #
-#  id           :bigint           not null, primary key
-#  description  :text
-#  performed_at :datetime         not null
-#  status       :string           default("pending")
-#  created_at   :datetime         not null
-#  updated_at   :datetime         not null
-#  device_id    :bigint           not null
+#  id                 :bigint           not null, primary key
+#  description        :text
+#  device_status      :string
+#  maintenance_status :string           default("pending")
+#  performed_at       :datetime         not null
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#  device_id          :bigint           not null
 #
 # Indexes
 #
@@ -22,11 +23,29 @@
 #
 
 one:
-  device: one
-  performed_at: 2025-06-16 11:14:27
-  description: MyText
+  device: pos_terminal_1
+  performed_at: <%= Time.current - 1.hour %>
+  description: "Routine maintenance check completed"
+  device_status: "activo"
+  maintenance_status: "completed"
 
 two:
-  device: two
-  performed_at: 2025-06-16 11:14:27
-  description: MyText
+  device: printer_1
+  performed_at: <%= Time.current - 2.hours %>
+  description: "Paper jam resolved"
+  device_status: "advertencia"
+  maintenance_status: "completed"
+
+three:
+  device: network_router_1
+  performed_at: <%= Time.current - 30.minutes %>
+  description: "Network connectivity issues detected"
+  device_status: "critico"
+  maintenance_status: "in_progress"
+
+four:
+  device: pos_terminal_2
+  performed_at: <%= Time.current - 3.hours %>
+  description: "Hardware malfunction - replacement needed"
+  device_status: "inactivo"
+  maintenance_status: "pending"
