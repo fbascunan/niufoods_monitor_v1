@@ -6,8 +6,8 @@
   </div>
 </div>
 
-<div class="restaurant-detail-container">
-  <div class="restaurant-detail-card <%= @restaurant.status %>">
+<div class="restaurants-container restaurant-detail-container">
+  <div class="restaurant-detail-card <%= @restaurant.status %>" data-restaurant-id="<%= @restaurant.id %>">
     <div class="restaurant-detail-header">
       <div class="restaurant-detail-info">
         <div class="title-section">
