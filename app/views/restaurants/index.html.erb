@@ -12,7 +12,10 @@
       <div class="restaurant-header" onclick="toggleDevices(<%= restaurant.id %>)">
         <div class="restaurant-info">
           <h3><%= restaurant.name %></h3>
-          <p class="location"><%= restaurant.location %></p>
+          <p class="location">
+            <%= restaurant.location %>
+            <%= link_to "...details", restaurant_path(restaurant), class: "details-link", title: "View Details" %>
+          </p>
         </div>
         <div class="restaurant-status">
           <span class="status-badge status-<%= restaurant.status %>">

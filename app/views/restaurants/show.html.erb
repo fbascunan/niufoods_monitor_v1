@@ -1,0 +1,180 @@
+<div class="dashboard-header">
+  <%= image_tag "niu-logo.png", alt: "NIU Logo", class: "logo" %>
+  <h1>Restaurant Details</h1>
+  <div class="navigation back-link">
+    <%= link_to "← Back to Dashboard", restaurants_path, class: "btn btn-details" %>
+  </div>
+</div>
+
+<div class="restaurant-detail-container">
+  <div class="restaurant-detail-card <%= @restaurant.status %>">
+    <div class="restaurant-detail-header">
+      <div class="restaurant-detail-info">
+        <div class="title-section">
+          <h2><%= @restaurant.name %></h2>
+          <button class="reload-icon" onclick="window.location.reload()" title="Reload">
+            🔄
+          </button>
+        </div>
+        <p class="location"><%= @restaurant.location %></p>
+        <p class="address"><%= @restaurant.address %></p>
+        <div class="contact-info">
+          <p><strong>Phone:</strong> <%= @restaurant.phone %></p>
+          <p><strong>Email:</strong> <%= @restaurant.email %></p>
+          <p><strong>Timezone:</strong> <%= @restaurant.timezone %></p>
+        </div>
+        <div class="restaurant-detail-footer">
+          <div class="device-count">
+            <%= @restaurant.devices.count %> devices
+          </div>
+        </div>
+        </div>
+      <div class="restaurant-detail-status">
+        <span class="status-badge status-<%= @restaurant.status %>">
+          <%= @restaurant.status %>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="devices-section">
+    <div class="devices-header">
+      <h3>Devices</h3>
+    </div>
+    
+    <% if @restaurant.devices.any? %>
+      <div class="devices-grid">
+        <% @restaurant.devices.each do |device| %>
+          <% 
+            device_status_mapping = {
+              'activo' => 'operational',
+              'advertencia' => 'warning', 
+              'critico' => 'critical',
+              'inactivo' => 'inactive'
+            }
+            device_display_status = device_status_mapping[device.status] || device.status
+          %>
+          <div class="device-card device-<%= device_display_status %>" data-device-id="<%= device.id %>">
+            <div class="device-header">
+              <h4><%= device.name %></h4>
+              <span class="device-status status-<%= device_display_status %>">
+                <%= device_display_status %>
+              </span>
+            </div>
+            <div class="device-details">
+              <p><strong>Type:</strong> <%= device.device_type %></p>
+              <p><strong>Model:</strong> <%= device.model || 'N/A' %></p>
+              <p><strong>Serial:</strong> <%= device.serial_number || 'N/A' %></p>
+              <p><strong>Last Check:</strong> 
+                <% if device.last_check_in_at %>
+                  <span class="last-check-time" data-device-id="<%= device.id %>">
+                    <%= time_ago_in_words(device.last_check_in_at) %> ago
+                  </span>
+                <% else %>
+                  <span class="last-check-time" data-device-id="<%= device.id %>">Never</span>
+                <% end %>
+              </p>
+              <div class="device-actions">
+                <%= link_to 'View History', device_path(device), class: 'history-link' %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="no-devices">
+        <p>No devices found for this restaurant.</p>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<style>
+  .back-link {
+    margin-left: auto;
+  }
+  
+  .title-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .reload-icon {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+  }
+  
+  .reload-icon:hover {
+    background-color: #f8f9fa;
+  }
+  
+  .restaurant-detail-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .restaurant-detail-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+    overflow: hidden;
+  }
+  
+  .restaurant-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 30px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .restaurant-detail-info h2 {
+    margin: 0 0 10px 0;
+    color: #333;
+  }
+  
+  .restaurant-detail-info .location {
+    font-size: 18px;
+    color: #666;
+    margin: 5px 0;
+  }
+  
+  .restaurant-detail-info .address {
+    color: #888;
+    margin: 5px 0 15px 0;
+  }
+  
+  .contact-info p {
+    margin: 5px 0;
+    color: #555;
+  }
+  
+  .restaurant-detail-status {
+    text-align: right;
+  }
+  
+  .devices-section {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+  
+  .devices-header {
+    padding: 20px 30px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .devices-header h3 {
+    margin: 0;
+    color: #333;
+  }
+</style> 
