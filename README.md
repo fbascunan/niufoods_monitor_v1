@@ -367,33 +367,6 @@ make restart
 make reset
 ```
 
-### Error de conexión a PostgreSQL
-```bash
-# Verificar que PostgreSQL esté corriendo
-sudo systemctl status postgresql
-
-# Crear usuario si es necesario
-sudo -u postgres createuser -s tu_usuario
-```
-
-### Error de conexión a Redis
-```bash
-# Verificar que Redis esté corriendo
-redis-cli ping
-
-# Iniciar Redis si no está corriendo
-redis-server
-```
-
-### Problemas con Sidekiq
-```bash
-# Verificar logs
-tail -f log/sidekiq.log
-
-# Reiniciar Sidekiq
-bundle exec sidekiq -C config/sidekiq.yml
-```
-
 ## 📝 Notas de Desarrollo
 
 - El sistema utiliza procesamiento asíncrono para manejar actualizaciones de estado
@@ -401,14 +374,6 @@ bundle exec sidekiq -C config/sidekiq.yml
 - El estado del restaurante se calcula automáticamente basado en el estado de sus dispositivos
 - El simulador puede ser configurado para diferentes escenarios de prueba
 - Docker proporciona un entorno aislado y reproducible
-
-## 🤝 Contribución
-
-1. Fork el proyecto
-2. Crear una rama para tu feature (`git checkout -b feature/nueva-funcionalidad`)
-3. Commit tus cambios (`git commit -am 'Agregar nueva funcionalidad'`)
-4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
-5. Crear un Pull Request
 
 ## 📄 Licencia
 

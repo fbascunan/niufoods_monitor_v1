@@ -10,6 +10,7 @@ Rails.application.routes.draw do
 
   require 'sidekiq/web'
   mount Sidekiq::Web => '/sidekiq'
+  get '/health', to: proc { [200, {}, ['OK']] }
 
   # Defines the root path route ("/")
   # root "posts#index"
