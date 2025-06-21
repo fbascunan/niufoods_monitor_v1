@@ -26,6 +26,12 @@ RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential git libpq-dev libvips pkg-config nodejs npm && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
+# Install the correct bundler version
+RUN gem install bundler -v '~> 2.5' --install-dir /usr/local/lib/ruby/gems/3.2.0
+
+# Add bundler to PATH
+ENV PATH="/usr/local/lib/ruby/gems/3.2.0/bin:${PATH}"
+
 # Install application gems (including development gems)
 COPY Gemfile Gemfile.lock ./
 RUN bundle install
@@ -49,6 +55,12 @@ FROM base as build
 # Install packages needed to build gems
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential git libpq-dev libvips pkg-config
+
+# Install the correct bundler version
+RUN gem install bundler -v '~> 2.5' --install-dir /usr/local/lib/ruby/gems/3.2.0
+
+# Add bundler to PATH
+ENV PATH="/usr/local/lib/ruby/gems/3.2.0/bin:${PATH}"
 
 # Install application gems
 COPY Gemfile Gemfile.lock ./

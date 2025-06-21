@@ -17,7 +17,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       post "devices/status", to: "devices#update_status"
-      resources :restaurants, only: [:index, :show]
+      resources :restaurants, only: [:index]
     end
   end
 end
