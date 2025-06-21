@@ -8,6 +8,7 @@ class UpdateDeviceStatusTest < ActiveSupport::TestCase
   def setup
     @restaurant = restaurants(:one)
     @device = devices(:pos_terminal_1)
+    @device = devices(:pos_terminal_1)
     @serial_number = @device.serial_number
     @device_type = @device.device_type
     @status = "active"
