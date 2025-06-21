@@ -2,7 +2,6 @@ require 'net/http'
 require 'uri'
 require 'json'
 require 'time' # For accurate timestamps
-require 'pry'
 
 # Load Rails environment to access models
 require_relative '../config/environment'

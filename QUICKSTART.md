@@ -1,104 +1,78 @@
-# 🚀 NiuFoods Monitor v1 - Quick Start Guide
+# 🚀 NiuFoods Monitor v1 - Quick Start
 
 ## Para Revisores
 
-Este es un sistema de monitoreo de dispositivos para restaurantes desarrollado en Ruby on Rails. La forma más fácil de ejecutarlo es usando Docker.
+Sistema de monitoreo de dispositivos para restaurantes desarrollado en Ruby on Rails.
 
-## ⚡ Inicio Rápido (2 minutos)
+## ⚡ Inicio Rápido
 
 ### 1. Prerrequisitos
 - Docker
 - Docker Compose
 
-### 2. Ejecutar el Proyecto
+### 2. Ejecutar
 
 ```bash
 # Clonar y entrar al directorio
 git clone <repository-url>
 cd niufoods_monitor_v1
 
-# Setup completo (esto puede tomar unos minutos la primera vez)
+# Setup completo
 make setup
 ```
 
-### 3. Acceder a la Aplicación
+### 3. Acceder
 
-Una vez completado el setup, puedes acceder a:
+- **Dashboard**: http://localhost:5000
+- **API**: http://localhost:5000/api/v1
+- **Sidekiq**: http://localhost:5000/sidekiq
 
-- **Dashboard Principal**: http://localhost:5000
-- **API Documentation**: http://localhost:5000/api/v1
-- **Sidekiq Dashboard**: http://localhost:5000/sidekiq
+## 🎮 Probar
 
-## 🎮 Probar el Sistema
-
-### Iniciar el Simulador
 ```bash
+# Iniciar simulador
 make simulator
-```
 
-El simulador enviará actualizaciones de estado de dispositivos cada 5 segundos. Puedes ver los cambios en tiempo real en el dashboard.
-
-### Ver Logs
-```bash
+# Ver logs
 make logs
-```
 
-### Ejecutar Pruebas
-```bash
+# Ejecutar tests
 make test
+
+# Verificar que todo funciona
+./test_app.sh
 ```
-
-## 📊 Qué Ver
-
-1. **Dashboard Principal**: Lista de restaurantes con su estado general
-2. **Detalles de Restaurante**: Dispositivos específicos y su estado
-3. **Logs de Mantenimiento**: Historial de cambios de estado
-4. **Sidekiq Dashboard**: Procesamiento en segundo plano
 
 ## 🔧 Comandos Útiles
 
 ```bash
-make help          # Ver todos los comandos
+make help          # Ver comandos
 make status        # Estado de servicios
-make restart       # Reiniciar servicios
+make restart       # Reiniciar
 make clean         # Limpiar todo
-make reset         # Reset completo
 ```
 
-## 🐛 Solución de Problemas
+## 🐛 Si hay problemas
 
-### Si el setup falla:
+### Error de permisos Docker:
+```bash
+sudo usermod -aG docker $USER
+newgrp docker
+```
+
+### Reset completo:
 ```bash
 make clean
-make reset
+make setup
 ```
 
-### Si los servicios no responden:
-```bash
-make restart
-```
-
-### Para ver logs específicos:
-```bash
-make logs
-```
-
-## 📝 Notas para la Revisión
+## 📝 Notas
 
 - **Arquitectura**: API REST + Sidekiq + PostgreSQL
 - **Procesamiento**: Asíncrono con Sidekiq
 - **Simulación**: Script que simula restaurantes reales
 - **Testing**: Suite completa de pruebas
 - **Docker**: Entorno aislado y reproducible
+- **Puertos**: Usa puertos no conflictivos (5433, 6380)
 
-## 🎯 Funcionalidades Clave
-
-1. ✅ API para recibir actualizaciones de dispositivos
-2. ✅ Procesamiento asíncrono con Sidekiq
-3. ✅ Dashboard en tiempo real
-4. ✅ Simulador de dispositivos
-5. ✅ Logs de mantenimiento
-6. ✅ Tests automatizados
-7. ✅ Docker setup completo
-
-¡El proyecto está listo para revisar! 🚀 
+¡Listo para revisar! 🚀 

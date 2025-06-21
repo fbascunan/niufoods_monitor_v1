@@ -11,7 +11,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./db/init:/docker-entrypoint-initdb.d
     ports:
-      - "5432:5432"
+      - "5433:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U niufoods_user -d niufoods_monitor_v1_development"]
       interval: 10s
@@ -25,7 +25,7 @@ services:
     image: redis:7-alpine
     container_name: niufoods_redis
     ports:
-      - "6379:6379"
+      - "6380:6379"
     volumes:
       - redis_data:/data
     healthcheck:
@@ -112,7 +112,7 @@ services:
     depends_on:
       web:
         condition: service_started
-    command: ["./bin/ruby", "simulator/device_simulator.rb"]
+    command: ["bundle", "exec", "ruby", "simulator/device_simulator.rb"]
     networks:
       - niufoods_network
     profiles:
