@@ -14,17 +14,24 @@ La forma más fácil de ejecutar este proyecto es usando Docker. Solo necesitas 
 
 ### Instalación y Ejecución
 
+#### 1. Clonar el repositorio
 ```bash
-# 1. Clonar el repositorio
 git clone <repository-url>
 cd niufoods_monitor_v1
-
-# 2. Ejecutar setup completo (recomendado)
-make setup
-
-# O alternativamente:
-./docker-setup.sh
 ```
+
+#### 2. Ejecutar setup completo (recomendado)
+```bash
+make setup
+make simulator
+```
+
+#### O alternativamente:
+```bash
+./docker-setup.sh
+docker compose --profile simulator up simulator
+```
+
 
 ### Comandos Útiles
 
@@ -81,6 +88,7 @@ Una vez iniciado, puedes acceder a:
 - **Hotwire/Turbo**: Actualizaciones en tiempo real
 - **Docker**: Containerización
 
+
 ## 📦 Instalación Manual (Sin Docker)
 
 ### Prerrequisitos
@@ -105,16 +113,32 @@ bundle install
 
 ### 3. Configurar variables de entorno
 
-Crear archivo `.env` en la raíz del proyecto:
+Copiar el archivo de ejemplo y configurar las variables:
 
 ```bash
-# Database
+cp env.example .env
+```
+
+Editar el archivo `.env` con tus credenciales:
+
+```bash
+# Database Configuration
 DB_USERNAME=tu_usuario_postgres
 DB_PASSWORD=tu_password_postgres
 
-# Redis (para Sidekiq)
+# Redis Configuration (para Sidekiq)
 REDIS_URL=redis://localhost:6379/0
+
+# Rails Configuration
+RAILS_ENV=development
+SECRET_KEY_BASE=tu_secret_key_base_aqui
+
+# API Configuration (necesario para el simulador)
+API_HOST=localhost
+API_PORT=5000
 ```
+
+**Nota**: El archivo `.env` ya está incluido en `.gitignore` para seguridad.
 
 ### 4. Configurar base de datos
 
@@ -178,15 +202,14 @@ Content-Type: application/json
 }
 ```
 
-#### Obtener restaurantes
+#### Obtener restaurantes (con dispositivos incluidos)
 ```bash
 GET /api/v1/restaurants
 ```
 
-#### Obtener dispositivos de un restaurante
-```bash
-GET /api/v1/restaurants/:id/devices
-```
+**Respuesta incluye**: Lista de restaurantes con sus dispositivos asociados.
+
+**Nota**: No existe el endpoint `/api/v1/restaurants/:id/devices`. Los dispositivos se incluyen automáticamente en la respuesta del endpoint de restaurantes.
 
 ### Simulador de Dispositivos
 
@@ -197,15 +220,15 @@ make simulator
 
 #### Sin Docker:
 ```bash
+# Asegúrate de que las variables de entorno estén configuradas en .env
 cd simulator
 ruby device_simulator.rb
 ```
 
-El simulador:
-- Carga datos de restaurantes y dispositivos desde la base de datos
-- Simula cambios de estado aleatorios cada 5 segundos
-- Envía actualizaciones a la API
-- Muestra logs en tiempo real
+**Nota**: Para el simulador manual, asegúrate de que:
+- El servidor web esté corriendo en `http://localhost:5000`
+- Las variables `API_HOST=localhost` y `API_PORT=5000` estén en tu archivo `.env`
+- La base de datos tenga datos de ejemplo (`rails db:seed`)
 
 ## 📊 Modelos de Datos
 
@@ -303,11 +326,6 @@ make test
 ```bash
 # Todas las pruebas
 rails test
-
-# Pruebas específicas
-rails test test/models/
-rails test test/controllers/
-rails test test/jobs/
 ```
 
 ## 📁 Estructura del Proyecto
@@ -345,11 +363,6 @@ niufoods_monitor_v1/
 - Configuración en `config/database.yml`
 - Usar variables de entorno para credenciales
 
-### Logs
-- Logs de Rails: `log/development.log`
-- Logs de Sidekiq: `log/sidekiq.log`
-- Logs de Docker: `docker-compose logs -f`
-
 ## 🚨 Solución de Problemas
 
 ### Docker
@@ -372,7 +385,6 @@ make reset
 - El sistema utiliza procesamiento asíncrono para manejar actualizaciones de estado
 - Los cambios de estado se registran automáticamente en el log de mantenimiento
 - El estado del restaurante se calcula automáticamente basado en el estado de sus dispositivos
-- El simulador puede ser configurado para diferentes escenarios de prueba
 - Docker proporciona un entorno aislado y reproducible
 
 ## 📄 Licencia
