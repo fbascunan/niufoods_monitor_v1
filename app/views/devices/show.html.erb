@@ -1,6 +1,11 @@
 <div class="device-detail-container">
   <div class="device-header">
-    <h1><%= @device.name %></h1>
+    <div class="title-section">
+      <h1><%= @device.name %></h1>
+      <button class="reload-btn" onclick="window.location.reload()" title="Reload page">
+        ↻
+      </button>
+    </div>
     <div class="device-meta">
       <span class="device-type"><%= @device.device_type %></span>
       <span class="device-status status-<%= @device.status %>"><%= @device.status %></span>
@@ -138,14 +143,13 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
 
   .device-header {
     text-align: center;
     margin-bottom: 30px;
     padding: 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--niu-light-red) 0%, var(--niu-black) 80%);
     color: white;
     border-radius: 10px;
   }
@@ -154,6 +158,34 @@
     margin: 0 0 10px 0;
     font-size: 2.5em;
     font-weight: 300;
+    color: white;
+  }
+
+  .title-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 10px;
+  }
+
+  .title-section h1 {
+    margin: 0;
+  }
+
+  .reload-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .reload-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
   }
 
   .device-meta {

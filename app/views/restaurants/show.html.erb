@@ -12,8 +12,8 @@
       <div class="restaurant-detail-info">
         <div class="title-section">
           <h2><%= @restaurant.name %></h2>
-          <button class="reload-icon" onclick="window.location.reload()" title="Reload">
-            🔄
+          <button class="reload-btn" onclick="window.location.reload()" title="Reload page">
+            ↻
           </button>
         </div>
         <p class="location"><%= @restaurant.location %></p>
@@ -100,18 +100,19 @@
     gap: 10px;
   }
   
-  .reload-icon {
-    background: none;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-    padding: 5px;
+  .reload-btn {
+    background: rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 4px;
-    transition: background-color 0.2s;
+    padding: 8px 12px;
+    cursor: pointer;
+    color: #333;
+    font-size: 16px;
+    font-weight: bold;
   }
   
-  .reload-icon:hover {
-    background-color: #f8f9fa;
+  .reload-btn:hover {
+    background: rgba(0, 0, 0, 0.15);
   }
   
   .restaurant-detail-container {
