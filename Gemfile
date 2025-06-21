@@ -13,7 +13,7 @@ gem "pg", "~> 1.1"
 
 gem "dotenv-rails"
 gem "sidekiq"
-
+gem "sidekiq-unique-jobs"
 
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"

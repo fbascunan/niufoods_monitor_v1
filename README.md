@@ -131,11 +131,13 @@ rails db:seed
 
 ### 5. Iniciar servicios
 
+#### Opción 1: Usar Foreman (recomendado)
 ```bash
-# Opción 1: Usar Foreman (recomendado)
 foreman start
+```
 
-# Opción 2: Iniciar servicios por separado
+#### Opción 2: Iniciar servicios por separado
+```bash
 # Terminal 1: Servidor web
 rails server -p 5000
 

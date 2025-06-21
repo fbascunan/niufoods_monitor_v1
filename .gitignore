@@ -36,3 +36,6 @@
 
 # Ignore cursor rules
 /.cursor/
+
+# Ignore vscode settings
+/.vscode/

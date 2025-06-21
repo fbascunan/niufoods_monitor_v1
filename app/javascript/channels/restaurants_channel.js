@@ -2,51 +2,47 @@ import consumer from "channels/consumer"
 
 let restaurantsContainer = null;
 let lastUpdateTime = 0;
-const UPDATE_THROTTLE_MS = 1000; // Only process updates every 1 second
+const UPDATE_THROTTLE_MS = 10; // Process updates every 1 second
 
-function updateConnectionStatus(connected, message) {
+function updateConnectionStatus(connected) {
   const indicator = document.getElementById('status-indicator');
-  const text = document.getElementById('status-text');
-  
-  if (indicator && text) {
+  if (indicator) {
     indicator.style.background = connected ? '#28a745' : '#dc3545';
-    text.textContent = message;
   }
 }
 
 consumer.subscriptions.create("RestaurantsChannel", {
   connected() {
-    updateConnectionStatus(true, "Connected");
+    updateConnectionStatus(true);
     this.findRestaurantsContainer();
   },
 
   disconnected() {
-    updateConnectionStatus(false, "Disconnected");
+    updateConnectionStatus(false);
   },
 
   received(data) {
-    // Throttle updates to prevent excessive processing
+    // Throttle updates
     const now = Date.now();
     if (now - lastUpdateTime < UPDATE_THROTTLE_MS) {
+      console.log("Throttling update");
       return;
     }
     lastUpdateTime = now;
-    
-    // Try to find container if not already found
+
     if (!restaurantsContainer) {
       this.findRestaurantsContainer();
     }
-    
-    // Only proceed if we're on a page with the restaurants container
     if (!restaurantsContainer) {
+      console.log("No restaurants container found");
       return;
     }
-    
+
     try {
-      if (data.type === 'device_update') {
-        this.updateDeviceCard(data);
-      } else {
-        this.updateRestaurantCard(data);
+      if (data.restaurant && data.devices) {
+        console.log("Updating restaurant and all devices", data.restaurant, data.devices);
+        this.updateRestaurantStatus(data.restaurant);
+        this.updateAllDevicesStatus(data.devices);
       }
     } catch (error) {
       console.error("Error processing WebSocket update:", error);
@@ -57,150 +53,52 @@ consumer.subscriptions.create("RestaurantsChannel", {
     restaurantsContainer = document.querySelector(".restaurants-container");
   },
 
-  updateRestaurantCard(data) {
-    const existingCard = document.querySelector(`[data-restaurant-id="${data.id}"]`);
-    if (existingCard) {
-      // Update card class for styling
-      existingCard.className = `restaurant-card ${data.status}`;
-      
-      // Update restaurant name
-      const nameElement = existingCard.querySelector('.restaurant-info h3');
-      if (nameElement) {
-        nameElement.textContent = data.name;
-      }
-      
-      // Update status badge
-      const statusBadge = existingCard.querySelector('.status-badge');
-      if (statusBadge) {
-        statusBadge.className = `status-badge status-${data.status}`;
-        statusBadge.textContent = data.status;
-      }
-      
-      // Update device count
-      const deviceCount = existingCard.querySelector('.device-count');
-      if (deviceCount) {
-        deviceCount.textContent = `${data.devices_count} devices`;
-      }
-    } else {
-      // Remove "no restaurants" message if it exists
-      const noRestaurantsDiv = restaurantsContainer.querySelector('.no-restaurants');
-      if (noRestaurantsDiv) {
-        noRestaurantsDiv.remove();
-      }
+  updateRestaurantStatus(restaurantData) {
+    const restaurantCard = document.querySelector(`[data-restaurant-id="${restaurantData.id}"]`);
+    if (!restaurantCard) {
+      console.log("No restaurant card found for ID:", restaurantData.id);
+      return;
+    }
 
-      // Create new restaurant card
-      const newCardHtml = `
-        <div class="restaurant-card ${data.status}" data-restaurant-id="${data.id}">
-          <div class="restaurant-header" onclick="toggleDevices(${data.id})">
-            <div class="restaurant-info">
-              <h3>${data.name}</h3>
-              <p class="location">${data.location || 'Location TBD'}</p>
-            </div>
-            <div class="restaurant-status">
-              <span class="status-badge status-${data.status}">
-                ${data.status}
-              </span>
-              <div class="device-count">
-                ${data.devices_count} devices
-              </div>
-              <div class="expand-icon" id="expand-${data.id}">▼</div>
-            </div>
-          </div>
-          
-          <div class="devices-section" id="devices-${data.id}" style="display: none;">
-            <div class="devices-header">
-              <h4>Devices</h4>
-            </div>
-            <div class="no-devices">
-              <p>No devices found for this restaurant.</p>
-            </div>
-          </div>
-        </div>
-      `;
-      
-      restaurantsContainer.insertAdjacentHTML('beforeend', newCardHtml);
+    // Update restaurant status badge
+    const statusBadge = restaurantCard.querySelector('.status-badge');
+    if (statusBadge) {
+      statusBadge.className = `status-badge status-${restaurantData.status}`;
+      statusBadge.textContent = restaurantData.status;
+      console.log("Updated restaurant status badge", restaurantData.status, statusBadge);
+    }
+
+    // Update restaurant card class
+    restaurantCard.className = `restaurant-card ${restaurantData.status}`;
+
+    // Update device count
+    const deviceCount = restaurantCard.querySelector('.device-count');
+    if (deviceCount) {
+      deviceCount.textContent = `${restaurantData.devices_count} devices`;
     }
   },
 
-  updateDeviceCard(data) {
-    const existingDeviceCard = document.querySelector(`[data-device-id="${data.device_id}"]`);
-    if (existingDeviceCard) {
-      // Update device card class for styling
-      existingDeviceCard.className = `device-card device-${data.status}`;
-      
-      // Update device name
-      const nameElement = existingDeviceCard.querySelector('.device-header h5');
-      if (nameElement) {
-        nameElement.textContent = data.name;
-      }
-      
+  updateAllDevicesStatus(devicesData) {
+    devicesData.forEach(deviceData => {
+      const deviceCard = document.querySelector(`[data-device-id="${deviceData.device_id}"]`);
+      if (!deviceCard) return;
+
       // Update device status
-      const statusElement = existingDeviceCard.querySelector('.device-status');
+      const statusElement = deviceCard.querySelector('.device-status');
       if (statusElement) {
-        statusElement.className = `device-status status-${data.status}`;
-        statusElement.textContent = data.status;
+        statusElement.className = `device-status status-${deviceData.status}`;
+        statusElement.textContent = deviceData.status;
       }
-      
-      // Update device details
-      const detailsElement = existingDeviceCard.querySelector('.device-details');
-      if (detailsElement) {
-        const typeElement = detailsElement.querySelector('p:nth-child(1)');
-        const modelElement = detailsElement.querySelector('p:nth-child(2)');
-        const serialElement = detailsElement.querySelector('p:nth-child(3)');
-        const lastCheckElement = detailsElement.querySelector('p:nth-child(4)');
-        
-        if (typeElement) {
-          typeElement.innerHTML = `<strong>Type:</strong> ${data.device_type}`;
-        }
-        if (modelElement) {
-          modelElement.innerHTML = `<strong>Model:</strong> ${data.model || 'N/A'}`;
-        }
-        if (serialElement) {
-          serialElement.innerHTML = `<strong>Serial:</strong> ${data.serial_number || 'N/A'}`;
-        }
-        if (lastCheckElement) {
-          const lastCheckTime = data.last_check_in_at ? 
-            new Date(data.last_check_in_at).toLocaleString() : 'Never';
-          lastCheckElement.innerHTML = `<strong>Last Check:</strong> <span class="last-check-time" data-device-id="${data.device_id}">${lastCheckTime}</span>`;
-        }
+
+      // Update device card class
+      deviceCard.className = `device-card device-${deviceData.status}`;
+
+      // Update last check time
+      const lastCheckElement = deviceCard.querySelector('.last-check-time');
+      if (lastCheckElement && deviceData.last_check_in_at) {
+        const lastCheckTime = new Date(deviceData.last_check_in_at).toLocaleString();
+        lastCheckElement.textContent = lastCheckTime;
       }
-    } else {
-      // Find the devices grid for this restaurant
-      const devicesGrid = document.querySelector(`#devices-${data.restaurant_id} .devices-grid`);
-      if (devicesGrid) {
-        // Remove "no devices" message if it exists
-        const noDevicesDiv = devicesGrid.parentElement.querySelector('.no-devices');
-        if (noDevicesDiv) {
-          noDevicesDiv.remove();
-        }
-        
-        // Create new device card
-        const newDeviceCardHtml = `
-          <div class="device-card device-${data.status}" data-device-id="${data.device_id}" data-restaurant-id="${data.restaurant_id}">
-            <div class="device-header">
-              <h5>${data.name}</h5>
-              <span class="device-status status-${data.status}">
-                ${data.status}
-              </span>
-            </div>
-            <div class="device-details">
-              <p><strong>Type:</strong> ${data.device_type}</p>
-              <p><strong>Model:</strong> ${data.model || 'N/A'}</p>
-              <p><strong>Serial:</strong> ${data.serial_number || 'N/A'}</p>
-              <p><strong>Last Check:</strong> 
-                <span class="last-check-time" data-device-id="${data.device_id}">
-                  ${data.last_check_in_at ? new Date(data.last_check_in_at).toLocaleString() : 'Never'}
-                </span>
-              </p>
-              <div class="device-actions">
-                <a href="/devices/${data.device_id}" class="history-link">View History</a>
-              </div>
-            </div>
-          </div>
-        `;
-        
-        devicesGrid.insertAdjacentHTML('beforeend', newDeviceCardHtml);
-      }
-    }
+    });
   }
 });

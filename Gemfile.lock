@@ -257,6 +257,10 @@ GEM
       logger (>= 1.6.2)
       rack (>= 3.1.0)
       redis-client (>= 0.23.2)
+    sidekiq-unique-jobs (8.0.11)
+      concurrent-ruby (~> 1.0, >= 1.0.5)
+      sidekiq (>= 7.0.0, < 9.0.0)
+      thor (>= 1.0, < 3.0)
     sprockets (4.2.2)
       concurrent-ruby (~> 1.0)
       logger
@@ -316,6 +320,7 @@ DEPENDENCIES
   redis (>= 4.0.1)
   selenium-webdriver
   sidekiq
+  sidekiq-unique-jobs
   sprockets-rails
   stimulus-rails
   turbo-rails

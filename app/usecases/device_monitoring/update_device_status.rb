@@ -14,105 +14,69 @@ module DeviceMonitoring
     end
 
     def call
-      validate_device_exists
-      validate_device_type
-      validate_status
-
-      # device = Device.find(@device_id)
-      # device.update(status: @status, last_check_in_at: @timestamp)
-      # device.maintenance_logs.create!(performed_at: @timestamp, description: "Estado actualizado a #{@status}")
-
+      Rails.logger.info "Processing device status update for device #{@serial_number} in restaurant #{@restaurant_name}"
+      
       success = ApplicationRecord.transaction do
         restaurant = Restaurant.find_by(name: restaurant_name)
-        device = restaurant.devices.find_by(serial_number: serial_number)
-
-        if device.nil?
-          raise "Device not found"
+        
+        if restaurant.nil?
+          raise "Restaurant not found: #{restaurant_name}"
         end
+
+        device = restaurant.devices.find_by(serial_number: serial_number)
+        
+        if device.nil?
+          raise "Device not found: #{serial_number} in restaurant #{restaurant_name}"
+        end
+
+        # Validate device type and status
+        validate_device_type(device)
+        validate_status
 
         old_restaurant_status = device.restaurant.status
         
+        # Update device status
         device.update!(status: @status, last_check_in_at: @last_check_in_at)
         
+        # Create maintenance log
         device.maintenance_logs.create!(
           description: description,
           performed_at: last_check_in_at,
           status: status,
         )
 
+        # Recalculate restaurant status
         restaurant.recalculate_status
-        broadcast_restaurant_status(restaurant, old_restaurant_status)
-        broadcast_device_status(device)
+        
+        # Schedule WebSocket broadcast job with restaurant ID (5-second delay)
+        # Unique jobs will prevent duplicates for the same restaurant
+        WebsocketBroadcastJob.set(wait: 5.seconds).perform_later(restaurant.id, old_restaurant_status)
 
+        Rails.logger.info "Successfully updated device #{@serial_number} status to #{@status}"
         true
       end
 
       success
     rescue ActiveRecord::RecordInvalid => e
-      Rails.logger.error("Error updating device status: #{e.message}")
+      Rails.logger.error "Validation error updating device #{@serial_number} status: #{e.message}"
       false
     rescue StandardError => e
-      Rails.logger.error("Error updating device status: #{e.message}")
+      Rails.logger.error "Error updating device #{@serial_number} status: #{e.message}"
       false
     end
 
     private
 
-    def validate_device_exists
-      raise "Device not found" unless Device.exists?(serial_number: serial_number, restaurant: { name: restaurant_name })
-    end
-
-    def validate_device_type
-      raise "Invalid device type" unless Device.device_types.include?(device_type)
+    def validate_device_type(device)
+      # Only validate if device_type is provided and different from current
+      if @device_type.present? && @device_type != device.device_type
+        raise "Invalid device type: #{@device_type}" unless Device.device_types.include?(@device_type)
+      end
     end
 
     def validate_status
-      raise "Invalid status" unless Device.statuses.include?(status)
-    end
-
-    def broadcast_restaurant_status(restaurant, old_restaurant_status)
-      return if restaurant.status == old_restaurant_status
-      
-      # Map restaurant status to CSS-friendly format
-      status_mapping = {
-        'activo' => 'operational',
-        'advertencia' => 'warning', 
-        'critico' => 'critical',
-        'inactivo' => 'inactive'
-      }
-      
-      ActionCable.server.broadcast("restaurants_channel", {
-        id: restaurant.id,
-        name: restaurant.name,
-        location: restaurant.location,
-        status: status_mapping[restaurant.status] || restaurant.status,
-        old_status: status_mapping[old_restaurant_status] || old_restaurant_status,
-        devices_count: restaurant.devices.count,
-        updated_ago: time_ago_in_words(restaurant.updated_at)
-      })
-    end
-
-    def broadcast_device_status(device)
-      # Map device status to CSS-friendly format
-      status_mapping = {
-        'activo' => 'operational',
-        'advertencia' => 'warning', 
-        'critico' => 'critical',
-        'inactivo' => 'inactive'
-      }
-      
-      ActionCable.server.broadcast("restaurants_channel", {
-        type: 'device_update',
-        device_id: device.id,
-        restaurant_id: device.restaurant.id,
-        name: device.name,
-        device_type: device.device_type,
-        status: status_mapping[device.status] || device.status,
-        model: device.model,
-        serial_number: device.serial_number,
-        last_check_in_at: device.last_check_in_at,
-        updated_ago: time_ago_in_words(device.updated_at)
-      })
+      # Check against enum keys (English) since simulation script sends English values
+      raise "Invalid status: #{@status}" unless Device.statuses.keys.include?(@status)
     end
   end
 end

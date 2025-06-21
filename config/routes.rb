@@ -17,7 +17,6 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       post "devices/status", to: "devices#update_status"
-      post "devices/test_websocket", to: "devices#test_websocket"
       resources :restaurants, only: [:index, :show]
     end
   end

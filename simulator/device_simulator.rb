@@ -15,12 +15,37 @@ API_URL = URI("http://#{API_HOST}:#{API_PORT}#{API_PATH}")
 
 # Configuration for simulation
 SIMULATION_CONFIG = {
-  'status_change_probability' => 0.10, # 10% chance of status change per device per cycle
-  'update_interval_seconds' => 5    # Send updates every 5 seconds
+  'status_change_probability' => 0.40, # 10% chance of status change per device per cycle
+  'update_interval_seconds' => 5 # Send updates every 5 seconds
 }
 
 # Available device statuses (using enum keys from Device model)
 DEVICE_STATUSES = ['active', 'warning', 'critical', 'inactive']
+
+# Status weights for more realistic distribution (higher weight = more common)
+STATUS_WEIGHTS = {
+  'active' => 90,    # 80% chance - most common
+  'inactive' => 1,  # 5% chance - moderately common
+  'warning' => 7,    # 10% chance - less common
+  'critical' => 2    # 5% chance - very rare
+}
+
+# Function to select status based on weights
+def select_weighted_status(exclude_status = nil)
+  available_statuses = exclude_status ? DEVICE_STATUSES - [exclude_status] : DEVICE_STATUSES
+  available_weights = available_statuses.map { |status| STATUS_WEIGHTS[status] }
+  total_weight = available_weights.sum
+  
+  random_value = rand(total_weight)
+  cumulative_weight = 0
+  
+  available_statuses.each_with_index do |status, index|
+    cumulative_weight += available_weights[index]
+    return status if random_value < cumulative_weight
+  end
+  
+  available_statuses.last # Fallback
+end
 
 # Load restaurant and device data from database
 def load_device_data_from_database
@@ -94,7 +119,7 @@ def run_simulation
         device_type: device['device_type'],
         device_name: device['name'],
         model: device['model'],
-        current_status: device['status'], # Use initial status from database
+        current_status: device['status'],
         description: "Initial #{device['status']} status"
       }
     end
@@ -108,12 +133,7 @@ def run_simulation
 
       # Simulate status changes based on configuration
       if rand < SIMULATION_CONFIG['status_change_probability']
-        possible_next_statuses = DEVICE_STATUSES - [current_status] # Don't immediately switch back to same
-        if possible_next_statuses.empty?
-            new_status = current_status # If only one status left, stick to it
-        else
-            new_status = possible_next_statuses.sample
-        end
+        new_status = select_weighted_status(current_status)
 
         description = case new_status
                       when 'warning' then "Device #{data[:device_name]} (#{serial_number}) is experiencing intermittent issues."
